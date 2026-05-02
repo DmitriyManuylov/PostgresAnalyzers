@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PgQueryParseLib\PgQueryParseLib.csproj" />
+    <ProjectReference Include="..\PgQueryParseLib\PgQueryAnalyzerLib.csproj" />
   </ItemGroup>
 
 </Project>
