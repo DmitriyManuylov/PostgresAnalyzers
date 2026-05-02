@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PgQueryParseLib.Models
+{
+    public class DbFieldModel
+    {
+        public string SchemaName { get; set; }
+        public string TableName { get; set; }
+        public string FieldName { get; set; }
+    }
+}
