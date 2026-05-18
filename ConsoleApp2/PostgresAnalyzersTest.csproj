@@ -10,12 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PgQueryParseLib\PgQueryParseLib.csproj" />
-    <ProjectReference Include="..\PgQueryParser\PgQueryParser.csproj" />
+    <ProjectReference Include="..\AnalyzeManager\AnalyzeManagers.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="LibPgQueryModels\" />
-  </ItemGroup>
-
 </Project>

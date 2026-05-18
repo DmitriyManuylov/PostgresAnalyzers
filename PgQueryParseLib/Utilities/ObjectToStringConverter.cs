@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 
-namespace PgQueryParseLib.Utilities
+namespace PgQueryAnalyzerLib.Utilities
 {
     public static class ObjectToStringConvertExtention
     {

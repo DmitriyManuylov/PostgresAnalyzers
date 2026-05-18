@@ -1,4 +1,4 @@
-﻿using PgQueryParseLib.GenericWalkers.Models;
+﻿using PgQueryAnalyzerLib.GenericWalkers.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

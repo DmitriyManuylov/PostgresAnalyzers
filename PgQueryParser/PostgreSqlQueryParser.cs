@@ -2,13 +2,13 @@
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Xml.Linq;
-using PgQueryParseLib.CustomExceptions;
+using PgQueryAnalyzerLib.CustomExceptions;
 using PgQuery;
 using pb = global::Google.Protobuf;
 using Google.Protobuf;
 using PgQueryParser.LibPgQueryModels;
 
-namespace PgQueryParseLib
+namespace PgQueryAnalyzerLib
 {
     public class PostgreSqlQueryParser
     {
@@ -144,7 +144,7 @@ namespace PgQueryParseLib
                     var errorPtr = result + sizeof(int);
                     ParseError parseError = DeserializeParseError(errorPtr);
                     NativeMemory.Free(result);
-                    throw new ParseQueryException(parseError);
+                    throw new PlStmtParseException(parseError);
                 }
 
                 int jsonStringLength = *((int*)result + 1);
@@ -229,17 +229,17 @@ namespace PgQueryParseLib
 
     public static class PgQueryNativeLibWrapper
     {
-        [DllImport("PgQueryAnalyzerLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
+        [DllImport("PgQueryParseLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern unsafe byte* GetQueryParseTree(string query);
-        [DllImport("PgQueryAnalyzerLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
+        [DllImport("PgQueryParseLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern unsafe byte* GetQueryParseTreeWithOptions(string query, int parser_mode);
 
-        [DllImport("PgQueryAnalyzerLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
+        [DllImport("PgQueryParseLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern unsafe byte* GetQueryProtobufParseTree(string query);
-        [DllImport("PgQueryAnalyzerLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
+        [DllImport("PgQueryParseLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern unsafe byte* GetQueryProtobufParseTreeWithOptions(string query, int parse_mode);
 
-        [DllImport("PgQueryAnalyzerLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
+        [DllImport("PgQueryParseLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern unsafe byte* GetPlPgQueryJsonParseTree(string query);
     }
 }

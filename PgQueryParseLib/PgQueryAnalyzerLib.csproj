@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\DbField.cs" />
+    <Compile Remove="Models\DbFieldModel.cs" />
+    <Compile Remove="Models\DMLPgNode.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="PgQueryAnalyzerLib.dll" />
   </ItemGroup>
 

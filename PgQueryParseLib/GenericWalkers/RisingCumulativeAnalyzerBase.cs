@@ -1,13 +1,13 @@
-﻿using PgQueryParseLib.AnalyzeContext;
-using PgQueryParseLib.GenericWalkers.Models;
-using PgQueryParseLib.Models;
+﻿using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.GenericWalkers.Models;
+using PgQueryAnalyzerLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.GenericWalkers
+namespace PgQueryAnalyzerLib.GenericWalkers
 {
     /// <summary>
     /// "Восходящий накопительный" анализатор:
@@ -19,17 +19,22 @@ namespace PgQueryParseLib.GenericWalkers
         protected Stack<AnalyzeTreeNode<TPgAnalyzeNode>> NodesStack { get; set; }
         protected AnalyzeTreeNode<TPgAnalyzeNode> CurrentNode
         {
-            get => NodesStack.Peek();
+            get => NodesStack.TryPeek(out var node) ? node : null;
         }
 
-        public AnalyzeTree<TPgAnalyzeNode> AnalyzeTree { get; private set; }
-        public RisingCumulativeAnalyzerBase(StmtsProcessingContext context): base(context)
+        //public override TAnalyzeResult GetResult<TAnalyzeResult>()
+        //{
+        //    return AnalyzeTree;
+        //}
+
+        internal AnalyzeTree<TPgAnalyzeNode> AnalyzeTree { get; private set; }
+        public RisingCumulativeAnalyzerBase(StmtsProcessingContext context) : base(context)
         {
             NodesStack = new Stack<AnalyzeTreeNode<TPgAnalyzeNode>>();
             AnalyzeTree = new AnalyzeTree<TPgAnalyzeNode>();
         }
 
-        public override void ProcessDirectTraversal(PgGenericNode node)
+        internal override void ProcessDirectTraversal(PgGenericNode node)
         {
             var analyzeNode = new AnalyzeTreeNode<TPgAnalyzeNode>()
             {
@@ -49,20 +54,31 @@ namespace PgQueryParseLib.GenericWalkers
             NodesStack.Push(analyzeNode);
         }
 
-        public override void ProcessReverseTraversal(PgGenericNode node)
+        internal override void ProcessReverseTraversal(PgGenericNode node)
         {
+            var analyzeNode = NodesStack.Pop();
 
-            if (CurrentNode == AnalyzeTree.Root)
+            if (CurrentNode == null)
             {
                 return;
             }
 
-            var analyzeNode = NodesStack.Pop();
-
-            if (analyzeNode.AnalyzeNodeModel.IsNeedToPropogate)
+            if (!analyzeNode.AnalyzeNodeModel.IsNeedToPropogate)
             {
-                CurrentNode.Children.Add(analyzeNode);
+                return;
             }
+
+            if (analyzeNode.AnalyzeNodeModel is not null)
+            {
+                CurrentNode.ChildrenAnalyzeNodeModelList.Add(analyzeNode.AnalyzeNodeModel);
+            }
+
+            if (analyzeNode.ChildrenAnalyzeNodeModelList.Count > 0)
+            {
+                CurrentNode.ChildrenAnalyzeNodeModelList.AddRange(analyzeNode.ChildrenAnalyzeNodeModelList);
+            }
+
+            CurrentNode.Children.Add(analyzeNode);
         }
 
     }

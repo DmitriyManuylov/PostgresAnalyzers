@@ -3599,6 +3599,7 @@ message PLpgSQL_stmt {
 	PLpgSQL_stmt_raise PLpgSQL_stmt_raise = 11;
 	PLpgSQL_stmt_case PLpgSQL_stmt_case = 12;
 	PLpgSQL_stmt_exit PLpgSQL_stmt_exit = 13;
+    PLpgSQL_function PLpgSQL_function = 14;
   }
 }
 

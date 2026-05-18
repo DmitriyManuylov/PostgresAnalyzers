@@ -1,5 +1,5 @@
 ﻿using PgQuery;
-using PgQueryParseLib.Models;
+using PgQueryAnalyzerLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

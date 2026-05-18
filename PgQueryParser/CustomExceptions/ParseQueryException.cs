@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.CustomExceptions
+namespace PgQueryAnalyzerLib.CustomExceptions
 {
     public class ParseQueryException: Exception
     {

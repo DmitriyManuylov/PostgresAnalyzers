@@ -1,17 +1,17 @@
 ﻿using DataChangeAnalyzer.Models.DBModels;
 using PgQuery;
-using PgQueryParseLib.GenericWalkers;
-using PgQueryParseLib.Models;
-using PgQueryParseLib.Services.Models.DbModels.PlainModels;
-using PgQueryParseLib.StmtsVisit.ExprsVisitors;
-using PgQueryParseLib.StmtsVisit.StmtsVisitors;
+using PgQueryAnalyzerLib.GenericWalkers;
+using PgQueryAnalyzerLib.Models;
+using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
+using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
+using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.AnalyzeContext
+namespace PgQueryAnalyzerLib.AnalyzeContext
 {
 
     public class StmtsProcessingContext
@@ -19,14 +19,14 @@ namespace PgQueryParseLib.AnalyzeContext
 
         public StmtsProcessingContext()
         {
-
+            PgGenericNodes = new();
         }
 
-        public GenericPgTreeWalker PgTreeWalker { get; private set; }
+        public GenericPgTreeWalker PgTreeWalker { get; set; }
 
         public Stack<PgGenericNode> PgGenericNodes { get; private set; }
 
-        Dictionary<TableModel, TableModel> DBTablesList { get; set; }
+        HashSet<TableModel> DBTablesList { get; set; }
         public List<DBFunctionPlainModel> DBFunctionList { get; set; }
         public List<DBTriggerPlainModel> DbTriggerList { get; set; }
         public TableModel GetDBTableModel(string nspName, string tableName)
@@ -41,7 +41,7 @@ namespace PgQueryParseLib.AnalyzeContext
 
         public DBFunctionPlainModel GetDBFunctionPlainModel(string nspName, string funcName)
         {
-            var result = DBFunctionList.Where(item => item.NspName == nspName && item.FuncName == funcName).FirstOrDefault();
+            var result = DBFunctionList.FirstOrDefault(item => item.NspName == nspName && item.FuncName == funcName);
 
             if(result is null)
             {
@@ -69,7 +69,7 @@ namespace PgQueryParseLib.AnalyzeContext
 
             return result;
         }
-        public TPgTreeWalker GetTreeWalkerByType<TPgTreeWalker>() where TPgTreeWalker: GenericPgTreeWalkerBase
+        public TPgTreeWalker GetTreeWalkerByType<TPgTreeWalker>() where TPgTreeWalker : GenericPgTreeWalkerBase
         {
             return PgTreeWalker.GetTreeWalkerByType<TPgTreeWalker>();
         }
@@ -77,10 +77,12 @@ namespace PgQueryParseLib.AnalyzeContext
         public void ProcessDirectTraversal(PgGenericNode node)
         {
             PgGenericNodes.Push(node);
+            PgTreeWalker.ProcessDirectTraversal(node);
         }
 
         public PgGenericNode ProcessReverseTraversal(PgGenericNode node)
         {
+            PgTreeWalker.ProcessReverseTraversal(node);
             return PgGenericNodes.Pop();
         }
 

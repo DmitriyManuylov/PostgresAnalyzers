@@ -1,7 +1,14 @@
-﻿using PgQuery;
-using PgQueryParseLib;
+﻿using AnalyzeManagers;
+using Google.Protobuf;
+using PgQuery;
+using PgQueryAnalyzerLib;
+using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.GenericWalkers;
+using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
+using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace PostgresAnalyzersTest
@@ -216,12 +223,49 @@ select
     pt.name
 from mir.mdoc mdoc
 inner join mir.get_prescs(mdoc.id) pr on true
-inner join mir.get_presctype(pr.presctype_id) pt on true
+--inner join mir.get_presctype(pr.presctype_id) pt on true
+left join mir.presc presc on presc.mdoc_id = mdoc.id
+left join lateral (
+    select visit.id, visit.cr_dt 
+    from mir.visit visit
+    where visit.mdoc_id = mdoc.id) on true
+where
+    pr.id = :presc::char(36)
 ";
+
+        const string insertStmt3 = @"
+insert into mir.presc
+values
+    (:id, :pt_id, :visit_id)";
+
+        const string dfs = @"
+do $$
+begin
+update mir.presc
+set
+    pt.pt_id = 'gtdf',
+    upd_dt = '35434'
+where 
+    id = 'wtrw'
+returning
+    id,pt.pt_id,upd_dt;
+end;
+$$;";
+
         static void Main(string[] args)
         {
-            ParseQueries();
+            AnalyzeDMLOperations(dfs);
+            //ParseQueries();
             //NewMethod();
+        }
+
+        private static void AnalyzeDMLOperations(string queryText)
+        {
+            AnalyzeManager manager = new AnalyzeManager();
+            manager.AddDMLOperationsAnalyzer();
+            manager.Analyze(queryText);
+
+            var dmlAnalyzeResult = manager.GetDMLOperationsResult();
         }
 
         private static void ParseQueries()
@@ -230,6 +274,7 @@ inner join mir.get_presctype(pr.presctype_id) pt on true
             var parser = new PostgreSqlQueryParser();
             var insJson = parser.GetQueryParseTree(insert_stmt);
             var insJson2 = parser.GetQueryParseTree(insert_stmt2);
+            var insJson3 = parser.GetQueryParseTree(insertStmt3);
 
             var qsum = parser.GetQueryParseTree(query_sum);
 

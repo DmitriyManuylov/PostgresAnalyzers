@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.Services.Models.DbModels
+namespace PgQueryAnalyzerLib.Services.Models.DbModels
 {
     public class DBSchemaModel: BaseModel
     {

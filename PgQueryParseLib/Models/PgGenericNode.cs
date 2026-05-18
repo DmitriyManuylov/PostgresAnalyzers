@@ -1,12 +1,12 @@
 ﻿using PgQuery;
-using PgQueryParseLib.CustomExceptions;
+using PgQueryAnalyzerLib.CustomExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.Models
+namespace PgQueryAnalyzerLib.Models
 {
     public enum PgNodeDialectType
     {

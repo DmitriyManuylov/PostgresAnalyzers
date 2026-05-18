@@ -1,6 +1,6 @@
-﻿using PgQueryParseLib.Utilities;
+﻿using PgQueryAnalyzerLib.Utilities;
 
-namespace PgQueryParseLib.Services.Models.DbModels.PlainModels
+namespace PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels
 {
     public class ForeignKeyMappingModel
     {

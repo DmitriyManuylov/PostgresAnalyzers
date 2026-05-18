@@ -1,6 +1,6 @@
 ﻿
-using PgQueryParseLib.Services.Models.DbModels;
-using PgQueryParseLib.Services.Models.DbModels.PlainModels;
+using PgQueryAnalyzerLib.Services.Models.DbModels;
+using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

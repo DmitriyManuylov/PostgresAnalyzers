@@ -1,9 +1,10 @@
 ﻿using IndexUsingAnalyzer.Models;
 using IndexUsingAnalyzer.Models.InnerModels;
 using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
-using PgQueryParseLib.GenericWalkers;
-using PgQueryParseLib.Models;
+using PgQueryAnalyzerLib.Models;
+using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.GenericWalkers;
+using PgQueryAnalyzerLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +19,16 @@ namespace IndexUsingAnalyzer.Analyzer
         private Stack<PgGenericNode> _joinStack = new Stack<PgGenericNode>();
 
         private InnerIndexUsingModel _innerIndexUsingModel;
+        private HashSet<Node> _visitedNodes = new();
 
+        private List<List<TableInnerModel>> QueryMultiLevelContext = new List<List<TableInnerModel>>();
 
         public IndexUsingAnalyzer(StmtsProcessingContext context) : base(context)
         {
+
         }
 
-        public override void ProcessJoinExpr_DirectTraversal(PgGenericNode node)
+        internal override void ProcessJoinExpr_DirectTraversal(PgGenericNode node)
         {
             base.ProcessJoinExpr_DirectTraversal(node);
 
@@ -39,11 +43,48 @@ namespace IndexUsingAnalyzer.Analyzer
             _innerIndexUsingModel.AddJoinToLastNode(node);
 
             var larg = stmt.Larg;
+            var genericLeftNode = new PgGenericNode
+            {
+                PgSqlNode = larg,
+            };
+            var genericRightNode = new
+            {
+                PgSqlNode = stmt.Rarg,
+            };
 
             switch (stmt.Larg.NodeCase)
             {
                 case Node.NodeOneofCase.RangeVar:
                     AddRangeVar(stmt.Larg.RangeVar);
+                    break;
+                case Node.NodeOneofCase.JoinExpr:
+                    ProcessJoinExpr_DirectTraversal(genericLeftNode);
+                    break;
+                case Node.NodeOneofCase.RangeSubselect:
+                    ProcessSelectStmt_DirectTraversal(genericLeftNode);
+                    break;
+                case Node.NodeOneofCase.RangeFunction:
+                    ProcessRangeFunction_DirectTraversal(genericLeftNode);
+                    break;
+                default:
+                    break;
+            }
+
+            switch (stmt.Rarg.NodeCase)
+            {
+                case Node.NodeOneofCase.RangeVar:
+                    AddRangeVar(stmt.Larg.RangeVar);
+                    break;
+                case Node.NodeOneofCase.JoinExpr:
+                    ProcessJoinExpr_DirectTraversal(genericLeftNode);
+                    break;
+                case Node.NodeOneofCase.RangeSubselect:
+                    ProcessSelectStmt_DirectTraversal(genericLeftNode);
+                    break;
+                case Node.NodeOneofCase.RangeFunction:
+                    ProcessRangeFunction_DirectTraversal(genericLeftNode);
+                    break;
+                default:
                     break;
             }
 
@@ -71,13 +112,21 @@ namespace IndexUsingAnalyzer.Analyzer
 
         private void AddRangeVar(RangeVar rangeVar)
         {
-            _innerIndexUsingModel.JoinsParentStackHead.TablesFrom.Add(new TableInnerModel()
+            QueryMultiLevelContext.Last().Add(new TableInnerModel
             {
                 TableNsp = rangeVar.Schemaname,
                 TableName = rangeVar.Relname,
                 TableAlias = rangeVar.Alias.Aliasname,
                 Type = TableType.Table
             });
+
+            //_innerIndexUsingModel.JoinsParentStackHead.TablesFrom.Add(new TableInnerModel()
+            //{
+            //    TableNsp = rangeVar.Schemaname,
+            //    TableName = rangeVar.Relname,
+            //    TableAlias = rangeVar.Alias.Aliasname,
+            //    Type = TableType.Table
+            //});
         }
 
         private void AddRangeSubselect(RangeSubselect rangeSubselect)
@@ -91,7 +140,7 @@ namespace IndexUsingAnalyzer.Analyzer
             //});
         }
 
-        public override void ProcessJoinExpr_ReverseTraversal(PgGenericNode node)
+        internal override void ProcessJoinExpr_ReverseTraversal(PgGenericNode node)
         {
             base.ProcessJoinExpr_ReverseTraversal(node);
 
@@ -101,63 +150,73 @@ namespace IndexUsingAnalyzer.Analyzer
             _joinStack.Pop();
         }
 
-        public override void ProcessSelectStmt_DirectTraversal(PgGenericNode node)
+
+        internal override void ProcessSelectStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessSelectStmt_DirectTraversal(node);
 
+            QueryMultiLevelContext.Add(new List<TableInnerModel>());
+
             var stmt = node.PgSqlNode.SelectStmt;
 
-            _innerIndexUsingModel.AddNode(node);
+            //_innerIndexUsingModel.AddNode(node);
 
         }
 
-        public override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
+        internal override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
         {
             base.ProcessSelectStmt_ReverseTraversal(node);
+
+            QueryMultiLevelContext.RemoveAt(QueryMultiLevelContext.Count - 1);
 
             var stmt = node.PgSqlNode.SelectStmt;
 
             _joinStack.Pop();
         }
 
-        public override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
+        internal override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessUpdateStmt_DirectTraversal(node);
 
-            _innerIndexUsingModel.AddNode(node);
+            QueryMultiLevelContext.Add(new List<TableInnerModel>());
 
-            var stmt = node.PgSqlNode.UpdateStmt;
 
-            _joinStack.Push(node);
+            //_innerIndexUsingModel.AddNode(node);
+
+            //var stmt = node.PgSqlNode.UpdateStmt;
+
+            //_joinStack.Push(node);
         }
 
-        public override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
+        internal override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
+        {
+            base.ProcessUpdateStmt_ReverseTraversal(node);
+
+            QueryMultiLevelContext.RemoveAt(QueryMultiLevelContext.Count - 1);
+
+            var stmt = node.PgSqlNode.UpdateStmt;
+        }
+
+        internal override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
+        {
+            base.ProcessUpdateStmt_DirectTraversal(node);
+
+            var stmt = node.PgSqlNode.UpdateStmt;
+        }
+
+        internal override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
         {
             base.ProcessUpdateStmt_ReverseTraversal(node);
 
             var stmt = node.PgSqlNode.UpdateStmt;
         }
 
-        public override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
-        {
-            base.ProcessUpdateStmt_DirectTraversal(node);
-
-            var stmt = node.PgSqlNode.UpdateStmt;
-        }
-
-        public override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
-        {
-            base.ProcessUpdateStmt_ReverseTraversal(node);
-
-            var stmt = node.PgSqlNode.UpdateStmt;
-        }
-
-        public override void ProcessRangeSubselect_DirectTraversal(PgGenericNode node)
+        internal override void ProcessRangeSubselect_DirectTraversal(PgGenericNode node)
         {
             base.ProcessRangeSubselect_DirectTraversal(node);
         }
 
-        public override void ProcessRangeSubselect_ReverseTraversal(PgGenericNode node)
+        internal override void ProcessRangeSubselect_ReverseTraversal(PgGenericNode node)
         {
             base.ProcessRangeSubselect_ReverseTraversal(node);
         }

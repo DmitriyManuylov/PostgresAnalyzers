@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using DataChangeAnalyzer.Models.DBModels;
 using Npgsql;
-using PgQueryParseLib.Services.Models.DbModels;
-using PgQueryParseLib.Services.Models.DbModels.PlainModels;
+using PgQueryAnalyzerLib.Services.Models.DbModels;
+using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.Services
+namespace PgQueryAnalyzerLib.Services
 {
     class DbEntitiesService
     {
