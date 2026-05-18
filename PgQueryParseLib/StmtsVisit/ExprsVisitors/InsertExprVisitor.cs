@@ -1,16 +1,16 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
+using PgQueryAnalyzerLib.AnalyzeContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.ExprsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 {
     public static partial class ExprVisitor
     {
-        public static void VisitInsertStmt(InsertStmt insertStmt, StmtsProcessingContext context)
+        private static void VisitInsertStmt(InsertStmt insertStmt, StmtsProcessingContext context)
         {
             if (insertStmt == null)
             {
@@ -26,11 +26,13 @@ namespace PgQueryParseLib.StmtsVisit.ExprsVisitors
                 VisitExpr(col, context);
             }
 
-            foreach(var cte in insertStmt.WithClause.Ctes)
+            if (insertStmt.WithClause is not null)
             {
-                VisitExpr(cte, context);
+                foreach (var cte in insertStmt.WithClause.Ctes)
+                {
+                    VisitExpr(cte, context);
+                }
             }
-
 
 
             context.PgTreeWalker.ProcessInsertStmt_ReverseTraversal(node);

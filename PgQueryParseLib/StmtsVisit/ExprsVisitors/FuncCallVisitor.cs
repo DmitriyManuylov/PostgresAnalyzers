@@ -1,17 +1,17 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
-using PgQueryParseLib.StmtsVisit.StmtsVisitors;
+using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.ExprsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 {
     public static partial class ExprVisitor
     {
-        public static void VisitFuncCall(FuncCall funcCall, StmtsProcessingContext context)
+        private static void VisitFuncCall(FuncCall funcCall, StmtsProcessingContext context)
         {
             if(funcCall is null)
             {
@@ -29,7 +29,12 @@ namespace PgQueryParseLib.StmtsVisit.ExprsVisitors
 
             var funcDef = context.GetDBFunctionPlainModel(funcCall.Funcname[0].String.Sval, funcCall.Funcname[1].String.Sval).ParsedStmt;
 
-            StmtVisitor.VisitBlockStatement(funcDef!.Action.PLpgSQLStmtBlock, context);
+            var stmt = new PLpgSQL_stmt
+            {
+                PLpgSQLStmtBlock = funcDef!.Action.PLpgSQLStmtBlock
+            };
+
+            StmtVisitor.VisitStmt(stmt, context);
 
             context.PgTreeWalker.ProcessFuncCall_ReverseTraversal(node);
         }

@@ -1,17 +1,17 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
-using PgQueryParseLib.StmtsVisit.ExprsVisitors;
+using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.StmtsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
 {
     public static partial class StmtVisitor
     {
-        public static void VisitRaiseStatement(PLpgSQL_stmt_raise raiseStmt, StmtsProcessingContext context)
+        private static void VisitRaiseStatement(PLpgSQL_stmt_raise raiseStmt, StmtsProcessingContext context)
         {
             if (raiseStmt is null)
             {

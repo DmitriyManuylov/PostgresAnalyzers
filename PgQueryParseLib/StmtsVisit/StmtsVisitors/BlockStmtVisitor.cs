@@ -1,16 +1,16 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
+using PgQueryAnalyzerLib.AnalyzeContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.StmtsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
 {
     public static partial class StmtVisitor
     {
-        public static void VisitBlockStatement(PLpgSQL_stmt_block blockStmt, StmtsProcessingContext context)
+        internal static void VisitBlockStatement(PLpgSQL_stmt_block blockStmt, StmtsProcessingContext context)
         {
             if (blockStmt is null)
             {

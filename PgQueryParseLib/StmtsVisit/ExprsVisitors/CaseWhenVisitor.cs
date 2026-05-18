@@ -1,16 +1,16 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
+using PgQueryAnalyzerLib.AnalyzeContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.ExprsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 {
     public static partial class ExprVisitor
     {
-        public static void VisitCaseWhen(CaseWhen caseWhen, StmtsProcessingContext context)
+        private static void VisitCaseWhen(CaseWhen caseWhen, StmtsProcessingContext context)
         {
             if(caseWhen is null)
             {

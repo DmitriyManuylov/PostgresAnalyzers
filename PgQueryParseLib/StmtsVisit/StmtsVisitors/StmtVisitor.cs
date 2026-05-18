@@ -1,13 +1,13 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
-using PgQueryParseLib.Models;
+using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.StmtsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
 {
     public static partial class StmtVisitor
     {
@@ -29,6 +29,9 @@ namespace PgQueryParseLib.StmtsVisit.StmtsVisitors
 
             switch (stmt.StmtCase)
             {
+                case PLpgSQL_stmt.StmtOneofCase.PLpgSQLFunction:
+                    VisitPLpgSQLFunction(stmt.PLpgSQLFunction, context);
+                    break;
                 case PLpgSQL_stmt.StmtOneofCase.PLpgSQLStmtAssign:
                     VisitAssignStatement(stmt.PLpgSQLStmtAssign, context);
                     break;
@@ -61,6 +64,8 @@ namespace PgQueryParseLib.StmtsVisit.StmtsVisitors
                     break;
                 case PLpgSQL_stmt.StmtOneofCase.PLpgSQLStmtCase:
                     VisitStmtCase(stmt.PLpgSQLStmtCase, context);
+                    break;
+                default:
                     break;
             }
 

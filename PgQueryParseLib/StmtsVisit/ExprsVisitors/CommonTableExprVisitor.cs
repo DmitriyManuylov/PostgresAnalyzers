@@ -1,17 +1,17 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
-using PgQueryParseLib.Models;
+using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.ExprsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 {
     public static partial class ExprVisitor
     {
-        public static void VisitCommonTableExpr(CommonTableExpr commonTableExpr, StmtsProcessingContext context)
+        private static void VisitCommonTableExpr(CommonTableExpr commonTableExpr, StmtsProcessingContext context)
         {
             if(commonTableExpr is null)
             {

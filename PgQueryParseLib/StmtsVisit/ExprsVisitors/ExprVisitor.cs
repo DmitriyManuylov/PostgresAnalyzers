@@ -1,13 +1,13 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
-using PgQueryParseLib.Models;
+using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.ExprsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 {
     public static partial class ExprVisitor
     {
@@ -29,6 +29,12 @@ namespace PgQueryParseLib.StmtsVisit.ExprsVisitors
 
             switch (expr.NodeCase)
             {
+                case Node.NodeOneofCase.CreateFunctionStmt:
+                    VisitCreateFunction(expr.CreateFunctionStmt, context);
+                    break;
+                case Node.NodeOneofCase.DefElem:
+                    VisitDefElem(expr.DefElem, context);
+                    break;
                 case Node.NodeOneofCase.UpdateStmt:
                     VisitUpdateStmt(expr.UpdateStmt, context);
                     break;

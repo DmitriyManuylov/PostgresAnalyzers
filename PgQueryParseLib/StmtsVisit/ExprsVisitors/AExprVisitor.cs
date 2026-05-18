@@ -1,17 +1,17 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
-using PgQueryParseLib.GenericWalkers;
+using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.GenericWalkers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.ExprsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 {
     public static partial class ExprVisitor
     {
-        public static void VisitAExpr(A_Expr aExpr, StmtsProcessingContext context)
+        private static void VisitAExpr(A_Expr aExpr, StmtsProcessingContext context)
         {
             
             if (aExpr is null)

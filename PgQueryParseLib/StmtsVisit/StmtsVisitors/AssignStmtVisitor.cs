@@ -1,18 +1,18 @@
 ﻿using PgQuery;
-using PgQueryParseLib.AnalyzeContext;
-using PgQueryParseLib.Models;
-using PgQueryParseLib.StmtsVisit.ExprsVisitors;
+using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.Models;
+using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryParseLib.StmtsVisit.StmtsVisitors
+namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
 {
     public static partial class StmtVisitor
     {
-        public static void VisitAssignStatement(PLpgSQL_stmt_assign assignStmt, StmtsProcessingContext context)
+        private static void VisitAssignStatement(PLpgSQL_stmt_assign assignStmt, StmtsProcessingContext context)
         {
             SetStmtParseTree(assignStmt.Expr.PLpgSQLExpr);
 
