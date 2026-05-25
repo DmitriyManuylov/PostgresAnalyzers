@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitInsertStmt(InsertStmt insertStmt, StmtsProcessingContext context)
         {
-            if (insertStmt == null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(insertStmt);
 
             var node = context.PgGenericNodes.Peek();
 
@@ -34,6 +31,10 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
                 }
             }
 
+            if (insertStmt.SelectStmt is not null)
+            {
+                VisitExpr(insertStmt.SelectStmt, context);
+            }
 
             context.PgTreeWalker.ProcessInsertStmt_ReverseTraversal(node);
         }

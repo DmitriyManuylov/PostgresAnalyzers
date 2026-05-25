@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitRangeSubselect(RangeSubselect rangeSubselect, StmtsProcessingContext context)
         {
-            if (rangeSubselect is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(rangeSubselect);
 
             var node = context.PgGenericNodes.Peek();
 

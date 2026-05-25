@@ -2,13 +2,13 @@
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Xml.Linq;
-using PgQueryAnalyzerLib.CustomExceptions;
 using PgQuery;
-using pb = global::Google.Protobuf;
+using pb = Google.Protobuf;
 using Google.Protobuf;
 using PgQueryParser.LibPgQueryModels;
+using PgQueryParser.CustomExceptions;
 
-namespace PgQueryAnalyzerLib
+namespace PgQueryParser
 {
     public class PostgreSqlQueryParser
     {
@@ -114,7 +114,7 @@ namespace PgQueryAnalyzerLib
         public TParseResult GetQueryProtobufParseTreeWithOptions<TParseResult>(
             string query, 
             int parser_mode = (int)RawParseMode.RawParsePlpgsqlAssign1) 
-            where TParseResult: pb::IMessage<TParseResult>, new()
+            where TParseResult: IMessage<TParseResult>, new()
         {
             var res = GetQueryProtobufParseTreeWithOptions(query, parser_mode);
 

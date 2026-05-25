@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PgQueryAnalyzerLib.CustomExceptions
+namespace PgQueryParser.CustomExceptions
 {
     public class PgNodeConstructException: Exception
     {

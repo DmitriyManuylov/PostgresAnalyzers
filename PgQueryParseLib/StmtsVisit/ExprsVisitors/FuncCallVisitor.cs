@@ -13,10 +13,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitFuncCall(FuncCall funcCall, StmtsProcessingContext context)
         {
-            if(funcCall is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(funcCall);
 
             var node = context.PgGenericNodes.Peek();
 

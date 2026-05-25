@@ -27,14 +27,14 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         //    return AnalyzeTree;
         //}
 
-        internal AnalyzeTree<TPgAnalyzeNode> AnalyzeTree { get; private set; }
+        protected AnalyzeTree<TPgAnalyzeNode> AnalyzeTree { get; private set; }
         public RisingCumulativeAnalyzerBase(StmtsProcessingContext context) : base(context)
         {
             NodesStack = new Stack<AnalyzeTreeNode<TPgAnalyzeNode>>();
             AnalyzeTree = new AnalyzeTree<TPgAnalyzeNode>();
         }
 
-        internal override void ProcessDirectTraversal(PgGenericNode node)
+        public override void ProcessDirectTraversal(PgGenericNode node)
         {
             var analyzeNode = new AnalyzeTreeNode<TPgAnalyzeNode>()
             {
@@ -54,7 +54,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             NodesStack.Push(analyzeNode);
         }
 
-        internal override void ProcessReverseTraversal(PgGenericNode node)
+        public override void ProcessReverseTraversal(PgGenericNode node)
         {
             var analyzeNode = NodesStack.Pop();
 

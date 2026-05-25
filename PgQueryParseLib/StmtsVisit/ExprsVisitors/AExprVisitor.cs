@@ -13,19 +13,22 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitAExpr(A_Expr aExpr, StmtsProcessingContext context)
         {
-            
-            if (aExpr is null)
-            {
-                throw new ArgumentNullException();
-            }
+
+            ArgumentNullException.ThrowIfNull(aExpr);
 
             var node = context.PgGenericNodes.Peek();
 
             context.PgTreeWalker.ProcessAExpr_DirectTraversal(node);
 
-            VisitExpr(aExpr.Lexpr, context);
+            if (aExpr.Lexpr is not null)
+            {
+                VisitExpr(aExpr.Lexpr, context);
+            }
 
-            VisitExpr(aExpr.Rexpr, context);
+            if (aExpr.Rexpr is not null)
+            {
+                VisitExpr(aExpr.Rexpr, context);
+            }
 
             foreach (var item in aExpr.Name)
             {

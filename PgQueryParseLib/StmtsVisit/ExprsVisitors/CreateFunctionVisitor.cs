@@ -12,14 +12,16 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitCreateFunction(CreateFunctionStmt createFunctionStmt, StmtsProcessingContext context)
         {
-            if (createFunctionStmt == null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(createFunctionStmt);
 
             var node = context.PgGenericNodes.Peek();
 
             string funcName = string.Join(".", createFunctionStmt.Funcname.Select(item => item.String.Sval));
+
+            foreach(var param in createFunctionStmt.Parameters)
+            {
+                VisitExpr(param, context);
+            }
 
             string returnType = string.Join(".", createFunctionStmt.ReturnType.Names.Select(item => item.String.Sval));
 

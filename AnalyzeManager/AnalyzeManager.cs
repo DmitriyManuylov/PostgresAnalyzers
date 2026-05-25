@@ -1,10 +1,14 @@
-﻿using PgQuery;
+﻿using Analyzers;
+using Analyzers.Models.ParametersTypeCastAnalyzer;
+using DMLOpsAnalyzer.Analyzer;
+using PgQuery;
 using PgQueryAnalyzerLib;
 using PgQueryAnalyzerLib.AnalyzeContext;
 using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.GenericWalkers.Models;
 using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
 using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
+using PgQueryParser;
 using System.Text.Json;
 
 namespace AnalyzeManagers
@@ -23,9 +27,13 @@ namespace AnalyzeManagers
         public void AddDMLOperationsAnalyzer()
         {
             DMLAnalyzer analyzer = new DMLAnalyzer(this.Context);
+            AddWalker(analyzer);
+        }
 
-            this.Context.PgTreeWalker = new GenericPgTreeWalker(this.Context);
-            this.Context.PgTreeWalker.AddWalker(analyzer);
+        public void AddParametersTypeCastAnalyzer()
+        {
+            ParametersTypeCastAnalyzer analyzer = new ParametersTypeCastAnalyzer(this.Context);
+            AddWalker(analyzer);
         }
 
         public void Analyze(string queryText)
@@ -94,9 +102,34 @@ namespace AnalyzeManagers
 
         public AnalyzeTree<DMLAnalyzeNode> GetDMLOperationsResult()
         {
+            ThrowExceptionIfNotSetResult();
+
             var analyzer = GetAnalyzerByType<DMLAnalyzer>();
 
             return analyzer.GetResult();
+        }
+
+        public List<ParameterTypeCastAnalyzeModel> GetParameterTypeCastAnalyzeResult()
+        {
+            ThrowExceptionIfNotSetResult();
+
+            var analyzer = GetAnalyzerByType<ParametersTypeCastAnalyzer>();
+
+            return analyzer.GetResult();
+        }
+
+        private void AddWalker(GenericPgTreeWalkerBase analyzer)
+        {
+            this.Context.PgTreeWalker ??= new GenericPgTreeWalker(this.Context);
+            this.Context.PgTreeWalker.AddWalker(analyzer);
+        }
+
+        private void ThrowExceptionIfNotSetResult()
+        {
+            if (!IsResultSet)
+            {
+                throw new Exception();
+            }
         }
     }
 }

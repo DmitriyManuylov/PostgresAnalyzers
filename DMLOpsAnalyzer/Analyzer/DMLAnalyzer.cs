@@ -1,5 +1,6 @@
 ﻿using PgQuery;
 using PgQueryAnalyzerLib.AnalyzeContext;
+using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.GenericWalkers.Models;
 using PgQueryAnalyzerLib.Models;
 using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
@@ -11,7 +12,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace PgQueryAnalyzerLib.GenericWalkers
+namespace DMLOpsAnalyzer.Analyzer
 {
     /// <summary>
     /// 
@@ -24,14 +25,9 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         {
         }
 
-        internal override void ProcessDirectTraversal(PgGenericNode node)
+        public override void ProcessReverseTraversal(PgGenericNode node)
         {
-            base.ProcessDirectTraversal(node);
-        }
-
-        internal override void ProcessReverseTraversal(PgGenericNode node)
-        {
-            var analyzeNode = base.NodesStack.Peek();
+            var analyzeNode = NodesStack.Peek();
             if (analyzeNode.AnalyzeNodeModel.Model is null && analyzeNode.ChildrenAnalyzeNodeModelList.Count <= 0)
             {
                 analyzeNode.AnalyzeNodeModel.IsNeedToPropogate = false;
@@ -40,7 +36,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             base.ProcessReverseTraversal(node);
         }
 
-        internal override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
+        public override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessUpdateStmt_DirectTraversal(node);
 
@@ -48,7 +44,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
 
             var entity = updateStmt.Relation;
 
-            var analyzeNode = base.NodesStack.Peek().AnalyzeNodeModel;
+            var analyzeNode = NodesStack.Peek().AnalyzeNodeModel;
 
             analyzeNode.IsNeedToPropogate = true;
             analyzeNode.Model = new DMLAnalyzeModel
@@ -60,7 +56,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             };
         }
 
-        internal override void ProcessInsertStmt_DirectTraversal(PgGenericNode node)
+        public override void ProcessInsertStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessInsertStmt_DirectTraversal(node);
 
@@ -68,7 +64,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
 
             var entity = insertStmt.Relation;
 
-            var analyzeNode = base.NodesStack.Peek().AnalyzeNodeModel;
+            var analyzeNode = NodesStack.Peek().AnalyzeNodeModel;
 
             analyzeNode.IsNeedToPropogate = true;
             analyzeNode.Model = new DMLAnalyzeModel
@@ -80,7 +76,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             };
         }
 
-        internal override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
+        public override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessDeleteStmt_DirectTraversal(node);
 
@@ -88,7 +84,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
 
             var entity = deleteStmt.Relation;
 
-            var analyzeNode = base.NodesStack.Peek().AnalyzeNodeModel;
+            var analyzeNode = NodesStack.Peek().AnalyzeNodeModel;
 
             analyzeNode.IsNeedToPropogate = true;
             analyzeNode.Model = new DMLAnalyzeModel
@@ -97,21 +93,6 @@ namespace PgQueryAnalyzerLib.GenericWalkers
                 Table = entity.Relname,
                 OpType = SQLDmlType.Delete
             };
-        }
-
-        internal override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
-        {
-            base.ProcessUpdateStmt_ReverseTraversal(node);
-        }
-
-        internal override void ProcessInsertStmt_ReverseTraversal(PgGenericNode node)
-        {
-            base.ProcessInsertStmt_ReverseTraversal(node);
-        }
-
-        internal override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
-        {
-            base.ProcessDeleteStmt_ReverseTraversal(node);
         }
 
         public AnalyzeTree<DMLAnalyzeNode> GetResult()

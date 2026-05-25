@@ -5,6 +5,7 @@ using PgQueryAnalyzerLib.Models;
 using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
 using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
 using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
+using PgQueryParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;

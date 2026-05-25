@@ -65,7 +65,7 @@ from pg_catalog.pg_attribute attr
 	left join pg_catalog.pg_namespace rel_namespace on rel_namespace.oid = rel_table.relnamespace
 where attr.attrelid in (select oid from pg_catalog.pg_class tbl where
 	tbl.oid in (select oid from pg_class tables where tables.relkind = 'r'
-	--and tables.relnamespace in (select oid from pg_namespace pg_nsp where pg_nsp.nspname = any(:Schemas))))
+	and case when :Schemas is not null then tables.relnamespace in (select oid from pg_namespace pg_nsp where pg_nsp.nspname = any(:Schemas)))) else true end
 order by 
 	  dependent_table.relname
 	, contsr.conkey
@@ -79,8 +79,7 @@ order by
                 return;
             }
 
-            FileStream fileStream = new FileStream("Schemas.json", FileMode.Open);
-            using (fileStream)
+            using (FileStream fileStream = new FileStream("Schemas.json", FileMode.Open))
             {
                 _schemasDictionary = JsonSerializer.Deserialize<Dictionary<string, string[]>>(fileStream);
             }
@@ -90,25 +89,14 @@ order by
         {
             IEnumerable<ForeignKeyMappingModel> foreignKeys;
 
-            string sql = _foreignKeysStructureQuery;
-
             using (var connection = new NpgsqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
 
                 foreignKeys = await connection.QueryAsync<ForeignKeyMappingModel>(_foreignKeysStructureQuery, new { Schemas = _schemasDictionary["Schemas"] });
-
-                var fks = connection.Query<ForeignKeyMappingModel>(sql);
-
-                DynamicParameters parameters = new DynamicParameters();
-
-                var obj = new { innerObj = new { i = 5, j = 1 }, Q = 6 };
-
-                parameters.Add("Schemas", _schemasDictionary["Schemas"], DbType.Object);
-
-                var fks2 = connection.Query<ForeignKeyMappingModel>(sql, parameters);
             }
-            return foreignKeys.ToList();
+
+            return foreignKeys.AsList();
 
         }
 
@@ -121,7 +109,7 @@ select
     fun_nsp.oid as NspOid,
     functions.oid as FuncOid,
     functions.proname as FuncName,
-    pg_get_functiondef(fun_nsp.oid) as FuncDef
+    pg_get_functiondef(functions.oid) as FuncDef
 from pg_catalog.pg_proc functions
 inner join pg_catalog.pg_namespace fun_nsp on fun_nsp.oid = functions.pronamespace
 where

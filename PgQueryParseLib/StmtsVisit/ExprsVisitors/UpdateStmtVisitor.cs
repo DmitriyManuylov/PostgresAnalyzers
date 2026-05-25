@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitUpdateStmt(UpdateStmt updateStmt, StmtsProcessingContext context)
         {
-            if(updateStmt == null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(updateStmt);
 
             var node = context.PgGenericNodes.Peek();
 
@@ -25,22 +22,18 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
             {
                 var target = targetWrap.ResTarget;
 
-                var fieldName = target.Name;
-
-                var indirection = target.Indirection;
-
-                var val = target.Val;
-
                 VisitExpr(targetWrap, context);
 
-               // var ret = target.
-
-                //target.
             }
 
             foreach(var ret in updateStmt.ReturningList)
             {
                 VisitExpr(ret, context);
+            }
+
+            if(updateStmt.WhereClause is not null)
+            {
+                VisitExpr(updateStmt.WhereClause, context);
             }
 
             context.PgTreeWalker.ProcessUpdateStmt_ReverseTraversal(node);

@@ -13,10 +13,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitCommonTableExpr(CommonTableExpr commonTableExpr, StmtsProcessingContext context)
         {
-            if(commonTableExpr is null)
-            {
-                throw new Exception();
-            }
+            ArgumentNullException.ThrowIfNull(commonTableExpr);
 
             var node = context.PgGenericNodes.Peek();
 

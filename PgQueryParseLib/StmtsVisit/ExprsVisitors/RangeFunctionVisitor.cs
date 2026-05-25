@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitRangeFunction(RangeFunction rangeFunction, StmtsProcessingContext context)
         {
-            if (rangeFunction is null)
-            {
-                throw new ArgumentNullException(nameof(rangeFunction));
-            }
+            ArgumentNullException.ThrowIfNull(rangeFunction);
 
             var node = context.PgGenericNodes.Peek();
 

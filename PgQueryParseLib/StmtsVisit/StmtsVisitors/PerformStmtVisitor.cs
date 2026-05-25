@@ -13,6 +13,8 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         private static void VisitPerformStatement(PLpgSQL_stmt_perform performStmt, StmtsProcessingContext context)
         {
+            ArgumentNullException.ThrowIfNull(performStmt);
+
             SetStmtParseTree(performStmt.Expr.PLpgSQLExpr);
 
             var node = context.PgGenericNodes.Peek();

@@ -13,10 +13,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         private static void VisitStmtCase(PLpgSQL_stmt_case stmt_Case, StmtsProcessingContext context)
         {
-            if(stmt_Case is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(stmt_Case);
 
             var node = context.PgGenericNodes.Peek();
 

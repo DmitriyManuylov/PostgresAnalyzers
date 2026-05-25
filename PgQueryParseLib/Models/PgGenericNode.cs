@@ -1,5 +1,5 @@
 ﻿using PgQuery;
-using PgQueryAnalyzerLib.CustomExceptions;
+using PgQueryParser.CustomExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitCaseWhen(CaseWhen caseWhen, StmtsProcessingContext context)
         {
-            if(caseWhen is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(caseWhen);
 
             var node = context.PgGenericNodes.Peek();
 

@@ -14,6 +14,8 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         private static void VisitAssignStatement(PLpgSQL_stmt_assign assignStmt, StmtsProcessingContext context)
         {
+            ArgumentNullException.ThrowIfNull(assignStmt);
+
             SetStmtParseTree(assignStmt.Expr.PLpgSQLExpr);
 
             var node = context.PgGenericNodes.Peek();

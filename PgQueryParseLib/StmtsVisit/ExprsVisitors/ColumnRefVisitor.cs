@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitColumnRef(ColumnRef columnRef, StmtsProcessingContext context)
         {
-            if(columnRef is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(columnRef);
 
             var node = context.PgGenericNodes.Peek();
 

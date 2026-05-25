@@ -12,6 +12,8 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         private static void VisitPLpgSQLFunction(PLpgSQL_function pLpgSQL_Function, StmtsProcessingContext context)
         {
+            ArgumentNullException.ThrowIfNull(pLpgSQL_Function);
+
             foreach(var stmt in pLpgSQL_Function.Action.PLpgSQLStmtBlock.Body)
             {
                 VisitStmt(stmt, context);

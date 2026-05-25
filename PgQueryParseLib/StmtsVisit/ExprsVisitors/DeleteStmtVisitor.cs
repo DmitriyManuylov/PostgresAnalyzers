@@ -13,25 +13,32 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitDeleteStmt(DeleteStmt deleteStmt, StmtsProcessingContext context)
         {
-            if(deleteStmt is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(deleteStmt);
 
             var node = context.PgGenericNodes.Peek();
 
             context.PgTreeWalker.ProcessDeleteStmt_DirectTraversal(node);
 
-            VisitExpr(deleteStmt.WhereClause, context);
-
-            foreach (var cte in deleteStmt.WithClause.Ctes)
+            if (deleteStmt.WhereClause is not null)
             {
-                VisitExpr(cte, context);
+                VisitExpr(deleteStmt.WhereClause, context);
             }
 
-            foreach (var item in deleteStmt.ReturningList)
+            if (deleteStmt.WithClause?.Ctes is not null)
             {
-                VisitExpr(item, context);
+                foreach (var cte in deleteStmt.WithClause.Ctes)
+
+                {
+                    VisitExpr(cte, context);
+                }
+            }
+
+            if (deleteStmt.ReturningList is not null)
+            {
+                foreach (var item in deleteStmt.ReturningList)
+                {
+                    VisitExpr(item, context);
+                }
             }
 
             context.PgTreeWalker.ProcessDeleteStmt_ReverseTraversal(node);

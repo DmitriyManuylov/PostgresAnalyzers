@@ -6,6 +6,7 @@ using PgQueryAnalyzerLib.AnalyzeContext;
 using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
 using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
+using PgQueryParser;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
@@ -231,6 +232,31 @@ left join lateral (
     where visit.mdoc_id = mdoc.id) on true
 where
     pr.id = :presc::char(36)
+    and pr.pt_id = any (cast(:pt_id as char(36)[]))
+    and pr.visit = cast(:visit as char(36))
+";
+
+        const string select = @"
+select
+    pr.id,
+    pr.presctype_id,
+    mdoc.num,
+    pt.name
+from mir.mdoc mdoc
+inner join mir.get_prescs pr on true
+--inner join mir.get_presctype pt on true
+left join mir.presc presc on presc.mdoc_id = mdoc.id
+left join lateral (
+    select visit.id, visit.cr_dt 
+    from mir.visit visit
+    where visit.mdoc_id = mdoc.id
+    and visit.people = :people) on true
+where
+    pr.id = :presc::char(36)
+    and pr.pt_id = any (:cast(pt_id as char(36)[]))
+    and mdoc.id = any(:mdoc_id::char(36)[])
+    and pr.visit = cast(:visit as char(36))
+    and pr.mdoc_id = :mdoc_id
 ";
 
         const string insertStmt3 = @"
@@ -252,9 +278,17 @@ returning
 end;
 $$;";
 
+        const string upd = @"
+                INSERT INTO equeue.sequence (oid, sequence_type, sequence_object, sequence_kind, cabinet_id, sotr_id, description,
+                                             designation,
+                                             active)
+                VALUES (:Oid, :SequenceType, :SequenceObject, :SequenceKind, :CabinetId, :SotrId, :Description, :Designation, :Active);";
+
         static void Main(string[] args)
         {
-            AnalyzeDMLOperations(dfs);
+            AnalyzeParametersCast(upd);
+            //ParseQueries();
+            //AnalyzeDMLOperations(dfs);
             //ParseQueries();
             //NewMethod();
         }
@@ -266,6 +300,15 @@ $$;";
             manager.Analyze(queryText);
 
             var dmlAnalyzeResult = manager.GetDMLOperationsResult();
+        }
+
+        private static void AnalyzeParametersCast(string queryText)
+        {
+            AnalyzeManager manager = new AnalyzeManager();
+            manager.AddParametersTypeCastAnalyzer();
+            manager.Analyze(queryText);
+
+            var analyzeRes = manager.GetParameterTypeCastAnalyzeResult();
         }
 
         private static void ParseQueries()
@@ -325,92 +368,6 @@ $$;";
 
             //var qt = parser.GetPlPgQueryJsonParseTree(q);
             var qt2 = parser.GetQueryParseTree(q2);*/
-        }
-
-        private static void NewMethod()
-        {
-            var str = GetQueryString(query);
-
-            unsafe
-            {
-                byte* result = GetQueryProtobufParseTree(str);
-
-                byte* resJson = GetQueryParseTree(str);
-
-                byte* res_PlPg = GetQueryParseTree(func);
-
-
-                //byte* bt = (byte*)result;
-
-                int code = *(int*)result;
-                int codeJson = *(int*)resJson;
-                int codePl = *(int*)res_PlPg;
-                int strlength = *((int*)result + 1);
-                int strlength2 = *((int*)resJson + 1);
-                int strLenPl = *((int*)res_PlPg + 1);
-
-                byte* messagePtr = result + 2 * sizeof(int);
-                byte* curByte = messagePtr - 1;
-
-                byte[] arr = new byte[strlength];
-                byte[] arrJson = new byte[strlength2];
-                byte[] arrPl = new byte[strLenPl];
-                StringBuilder builder = new StringBuilder();
-
-
-                for (int i = 0; i < strlength; i++)
-                {
-                    arr[i] = *++curByte;
-                }
-
-                messagePtr = resJson + 2 * sizeof(int);
-                curByte = messagePtr - 1;
-
-                for (int i = 0; i < strlength2; i++)
-                {
-                    arrJson[i] = *(++curByte);
-                }
-
-                messagePtr = res_PlPg + 2 * sizeof(int);
-                curByte = messagePtr - 1;
-
-                for (int i = 0; i < strLenPl; i++)
-                {
-                    arrPl[i] = *(++curByte);
-                }
-
-                var resJsonStr = Encoding.ASCII.GetString(arrJson);
-
-                var resPlStr = Encoding.ASCII.GetString(arrPl);
-                var resPb = ParseResult.Parser.ParseFrom(arr);
-
-                var resPl = PgQuery.ParseResult.Parser.ParseJson(resPlStr);
-
-
-                bool c = resPb.Stmts[0].Stmt.NodeCase == Node.NodeOneofCase.SelectStmt;
-
-                NativeMemory.Free(result);
-                Console.WriteLine("Hello, World!");
-            }
-        }
-
-        [DllImport("PgQueryAnalyzerLib.dll", CallingConvention= CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
-        static extern unsafe byte* GetQueryParseTree(string query);
-
-        [DllImport("PgQueryAnalyzerLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
-        static extern unsafe byte* GetQueryProtobufParseTree(string query);
-
-        [DllImport("PgQueryAnalyzerLib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, SetLastError = true)]
-        static extern unsafe byte* GetPlPgQueryJsonParseTree(string query);
-
-        static string GetQueryString(string inputString)
-        {
-            string patternColon = "(?<!:):(?![:=])";
-
-            string str = string.Empty;
-            str = Regex.Replace(inputString, patternColon, "@"); 
-
-            return str;
         }
     }
 }

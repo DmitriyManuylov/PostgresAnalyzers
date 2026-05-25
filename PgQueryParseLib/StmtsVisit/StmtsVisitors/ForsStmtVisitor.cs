@@ -14,6 +14,8 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         private static void VisitForsStatement(PLpgSQL_stmt_fors forsStmt, StmtsProcessingContext context)
         {
+            ArgumentNullException.ThrowIfNull(forsStmt);
+
             SetStmtParseTree(forsStmt.Query.PLpgSQLExpr);
 
             var node = context.PgGenericNodes.Peek();

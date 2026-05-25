@@ -28,7 +28,7 @@ namespace IndexUsingAnalyzer.Analyzer
 
         }
 
-        internal override void ProcessJoinExpr_DirectTraversal(PgGenericNode node)
+        public override void ProcessJoinExpr_DirectTraversal(PgGenericNode node)
         {
             base.ProcessJoinExpr_DirectTraversal(node);
 
@@ -140,7 +140,7 @@ namespace IndexUsingAnalyzer.Analyzer
             //});
         }
 
-        internal override void ProcessJoinExpr_ReverseTraversal(PgGenericNode node)
+        public override void ProcessJoinExpr_ReverseTraversal(PgGenericNode node)
         {
             base.ProcessJoinExpr_ReverseTraversal(node);
 
@@ -151,7 +151,7 @@ namespace IndexUsingAnalyzer.Analyzer
         }
 
 
-        internal override void ProcessSelectStmt_DirectTraversal(PgGenericNode node)
+        public override void ProcessSelectStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessSelectStmt_DirectTraversal(node);
 
@@ -163,7 +163,7 @@ namespace IndexUsingAnalyzer.Analyzer
 
         }
 
-        internal override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
+        public override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
         {
             base.ProcessSelectStmt_ReverseTraversal(node);
 
@@ -174,7 +174,7 @@ namespace IndexUsingAnalyzer.Analyzer
             _joinStack.Pop();
         }
 
-        internal override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
+        public override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessUpdateStmt_DirectTraversal(node);
 
@@ -188,7 +188,7 @@ namespace IndexUsingAnalyzer.Analyzer
             //_joinStack.Push(node);
         }
 
-        internal override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
+        public override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
         {
             base.ProcessUpdateStmt_ReverseTraversal(node);
 
@@ -197,26 +197,26 @@ namespace IndexUsingAnalyzer.Analyzer
             var stmt = node.PgSqlNode.UpdateStmt;
         }
 
-        internal override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
+        public override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessUpdateStmt_DirectTraversal(node);
 
             var stmt = node.PgSqlNode.UpdateStmt;
         }
 
-        internal override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
+        public override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
         {
             base.ProcessUpdateStmt_ReverseTraversal(node);
 
             var stmt = node.PgSqlNode.UpdateStmt;
         }
 
-        internal override void ProcessRangeSubselect_DirectTraversal(PgGenericNode node)
+        public override void ProcessRangeSubselect_DirectTraversal(PgGenericNode node)
         {
             base.ProcessRangeSubselect_DirectTraversal(node);
         }
 
-        internal override void ProcessRangeSubselect_ReverseTraversal(PgGenericNode node)
+        public override void ProcessRangeSubselect_ReverseTraversal(PgGenericNode node)
         {
             base.ProcessRangeSubselect_ReverseTraversal(node);
         }

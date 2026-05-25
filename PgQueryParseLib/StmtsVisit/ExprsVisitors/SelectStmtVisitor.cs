@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitSelectStmt(SelectStmt selectStmt, StmtsProcessingContext context)
         {
-            if(selectStmt is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(selectStmt);
 
             var node = context.PgGenericNodes.Peek();
 
@@ -53,6 +50,10 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
                 }
             }
 
+            if (selectStmt.WhereClause is not null)
+            {
+                VisitExpr(selectStmt.WhereClause, context);
+            }
 
             context.PgTreeWalker.ProcessSelectStmt_ReverseTraversal(node);
         }

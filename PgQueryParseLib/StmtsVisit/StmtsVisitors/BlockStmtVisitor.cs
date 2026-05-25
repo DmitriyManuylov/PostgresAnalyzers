@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         internal static void VisitBlockStatement(PLpgSQL_stmt_block blockStmt, StmtsProcessingContext context)
         {
-            if (blockStmt is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(blockStmt);
 
             var node = context.PgGenericNodes.Peek();
 

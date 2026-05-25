@@ -1,7 +1,7 @@
 ﻿using PgQuery;
 using PgQueryAnalyzerLib.AnalyzeContext;
-using PgQueryAnalyzerLib.CustomExceptions;
 using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
+using PgQueryParser.CustomExceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +14,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         private static void VisitIfStatement(PLpgSQL_stmt_if ifStmt, StmtsProcessingContext context)
         {
-            ParseResult conditionParseTree;
-
+            ArgumentNullException.ThrowIfNull(ifStmt);
 
             if (ifStmt is null)
             {

@@ -13,6 +13,8 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         private static void VisitReturnNextStatement(PLpgSQL_stmt_return_next returnNextStmt, StmtsProcessingContext context)
         {
+            ArgumentNullException.ThrowIfNull(returnNextStmt);
+
             if(returnNextStmt is null)
             {
                 throw new ArgumentNullException();

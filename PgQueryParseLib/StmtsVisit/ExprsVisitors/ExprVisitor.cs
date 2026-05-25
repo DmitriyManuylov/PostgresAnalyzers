@@ -1,6 +1,7 @@
 ﻿using PgQuery;
 using PgQueryAnalyzerLib.AnalyzeContext;
 using PgQueryAnalyzerLib.Models;
+using PgQueryParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
         public static void VisitExpr(Node expr, StmtsProcessingContext context)
         {
-            if (expr is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(expr);
 
             var node = new PgGenericNode()
             {
@@ -43,6 +41,9 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
                     break;
                 case Node.NodeOneofCase.SelectStmt:
                     VisitSelectStmt(expr.SelectStmt, context);
+                    break;
+                case Node.NodeOneofCase.List:
+                    VisitList(expr.List, context);
                     break;
                 case Node.NodeOneofCase.DeleteStmt:
                     VisitDeleteStmt(expr.DeleteStmt, context);
@@ -88,6 +89,27 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
                     break;
                 case Node.NodeOneofCase.RangeFunction:
                     VisitRangeFunction(expr.RangeFunction, context);
+                    break;
+                case Node.NodeOneofCase.AlterTableStmt:
+                    VisitAlterTableStmt(expr.AlterTableStmt, context);
+                    break;
+                case Node.NodeOneofCase.AlterTableCmd:
+                    VisitAlterTableCmd(expr.AlterTableCmd, context);
+                    break;
+                case Node.NodeOneofCase.TypeCast:
+                    VisitTypeCast(expr.TypeCast, context);
+                    break;
+                case Node.NodeOneofCase.DropStmt:
+                    VisitDropStmt(expr.DropStmt, context);
+                    break;
+                case Node.NodeOneofCase.RenameStmt:
+                    VisitRenameStmt(expr.RenameStmt, context);
+                    break;
+                case Node.NodeOneofCase.MultiAssignRef:
+                    VisitMultiAssignRef(expr.MultiAssignRef, context);
+                    break;
+                case Node.NodeOneofCase.RowExpr:
+                    VisitRowExpr(expr.RowExpr, context);
                     break;
                 default:
                     break;

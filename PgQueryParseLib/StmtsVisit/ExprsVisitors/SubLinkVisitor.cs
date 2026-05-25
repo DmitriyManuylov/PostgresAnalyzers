@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitSubLink(SubLink subLink, StmtsProcessingContext context)
         {
-            if(subLink is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(subLink);
 
             var node = context.PgGenericNodes.Peek();
 

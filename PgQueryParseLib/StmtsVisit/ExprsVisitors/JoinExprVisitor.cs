@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitJoinExpr(JoinExpr joinExpr, StmtsProcessingContext context)
         {
-            if(joinExpr is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(joinExpr);
 
             var node = context.PgGenericNodes.Peek();
 

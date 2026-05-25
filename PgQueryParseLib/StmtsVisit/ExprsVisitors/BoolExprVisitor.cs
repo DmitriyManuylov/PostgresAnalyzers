@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitBoolExpr(BoolExpr boolExpr, StmtsProcessingContext context)
         {
-            if (boolExpr is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(boolExpr);
 
             var node = context.PgGenericNodes.Peek();
 

@@ -13,10 +13,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         private static void VisitForiStatement(PLpgSQL_stmt_fori foriStmt, StmtsProcessingContext context)
         {
-            if (foriStmt is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(foriStmt);
 
             SetStmtParseTree(foriStmt?.Lower?.PLpgSQLExpr);
             SetStmtParseTree(foriStmt?.Upper?.PLpgSQLExpr);

@@ -12,10 +12,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
     {
         private static void VisitRangeVar(RangeVar rangeVar, StmtsProcessingContext context)
         {
-            if(rangeVar is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(rangeVar);
 
             var node = context.PgGenericNodes.Peek();
 

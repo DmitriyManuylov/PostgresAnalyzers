@@ -1,6 +1,7 @@
 ﻿using PgQuery;
 using PgQueryAnalyzerLib.AnalyzeContext;
 using PgQueryAnalyzerLib.Models;
+using PgQueryParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
 
         public static void VisitStmt(PLpgSQL_stmt stmt, StmtsProcessingContext context)
         {
-            if (stmt is null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(stmt);
 
             var node = new PgGenericNode()
             {

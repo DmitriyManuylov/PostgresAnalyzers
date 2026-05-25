@@ -13,10 +13,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors
     {
         private static void VisitExecSqlStmt(PLpgSQL_stmt_execsql execSqlStmt, StmtsProcessingContext context)
         {
-            if (execSqlStmt == null)
-            {
-                throw new ArgumentNullException();
-            }
+            ArgumentNullException.ThrowIfNull(execSqlStmt);
 
             SetStmtParseTree(execSqlStmt.Sqlstmt.PLpgSQLExpr);
 
