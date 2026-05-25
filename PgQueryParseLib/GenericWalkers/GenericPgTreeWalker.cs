@@ -46,6 +46,13 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         }
 
         public bool IsWalkerListNotEmpty()
+        
+        
+        
+        
+        
+        
+        
         {
             return PgTreeWalkerList.Any();
         }
@@ -371,6 +378,38 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             foreach (var item in PgTreeWalkerList)
             {
                 item.ProcessDropStmt_DirectTraversal(node);
+            }
+        }
+
+        public override void ProcessParamRef_DirectTraversal(PgGenericNode node)
+        {
+            foreach(var item in PgTreeWalkerList)
+            {
+                item.ProcessParamRef_DirectTraversal(node);
+            }
+        }
+
+        public override void ProcessCoalesceExpr_DirectTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessCoalesceExpr_DirectTraversal(node);
+            }
+        }
+
+        public override void ProcessNullTest_DirectTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessNullTest_DirectTraversal(node);
+            }
+        }
+
+        public override void ProcessNullIfExpr_DirectTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessNullIfExpr_DirectTraversal(node);
             }
         }
 
@@ -712,6 +751,38 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             foreach (var item in PgTreeWalkerList)
             {
                 item.ProcessList_ReverseTraversal(node);
+            }
+        }
+
+        public override void ProcessParamRef_ReverseTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessParamRef_ReverseTraversal(node);
+            }
+        }
+
+        public override void ProcessCoalesceExpr_ReverseTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessCoalesceExpr_ReverseTraversal(node);
+            }
+        }
+
+        public override void ProcessNullTest_ReverseTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessNullTest_ReverseTraversal(node);
+            }
+        }
+
+        public override void ProcessNullIfExpr_ReverseTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessNullIfExpr_ReverseTraversal(node);
             }
         }
     }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PgQueryAnalyzerLib.AnalyzeContext
@@ -23,12 +24,14 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
             PgGenericNodes = new();
         }
 
+        public List<string> QueryParameters { get; private set; }
+
         public GenericPgTreeWalker PgTreeWalker { get; set; }
 
         public Stack<PgGenericNode> PgGenericNodes { get; private set; }
 
         HashSet<TableModel> DBTablesList { get; set; }
-        public List<DBFunctionPlainModel> DBFunctionList { get; set; }
+        public List<DBFunctionPlainModel> DBFunctionList { get; set; } = new List<DBFunctionPlainModel>();
         public List<DBTriggerPlainModel> DbTriggerList { get; set; }
         public TableModel GetDBTableModel(string nspName, string tableName)
         {
@@ -87,6 +90,25 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
             return PgGenericNodes.Pop();
         }
 
+        public string RewriteParameters(string queryText)
+        {
+            string patternColon = @"(?:(?:(?<!:):(?![:=]))|@)\w+";
 
+            Regex regex = new Regex(patternColon);
+
+            MatchCollection matches = regex.Matches(queryText);
+
+            QueryParameters = matches.Select(m => m.Value.Substring(1)).Distinct().ToList();
+
+            string text = queryText;
+
+            foreach (Match match in matches.OrderByDescending(item => item.Value.Length))
+            {
+                text = text.Replace(match.Value, $"${QueryParameters.IndexOf(match.Value.Substring(1)) + 1}");
+                
+            }
+
+            return text;
+        }
     }
 }

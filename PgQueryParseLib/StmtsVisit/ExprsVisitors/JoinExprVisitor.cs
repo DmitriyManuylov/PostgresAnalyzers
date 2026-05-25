@@ -18,11 +18,20 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             context.PgTreeWalker.ProcessJoinExpr_DirectTraversal(node);
 
-            VisitExpr(joinExpr.Larg, context);
+            if (joinExpr.Larg is not null)
+            {
+                VisitExpr(joinExpr.Larg, context);
+            }
 
-            VisitExpr(joinExpr.Rarg, context);
+            if (joinExpr.Rarg is not null)
+            {
+                VisitExpr(joinExpr.Rarg, context);
+            }
 
-            VisitExpr(joinExpr.Quals, context);
+            if (joinExpr.Quals is not null)
+            {
+                VisitExpr(joinExpr.Quals, context);
+            }
 
             context.PgTreeWalker.ProcessJoinExpr_ReverseTraversal(node);
         }

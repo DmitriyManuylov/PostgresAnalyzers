@@ -111,6 +111,18 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
                 case Node.NodeOneofCase.RowExpr:
                     VisitRowExpr(expr.RowExpr, context);
                     break;
+                case Node.NodeOneofCase.ParamRef:
+                    VisitParamRef(expr.ParamRef, context);
+                    break;
+                case Node.NodeOneofCase.CoalesceExpr:
+                    VisitCoalesceExpr(expr.CoalesceExpr, context);
+                    break;
+                case Node.NodeOneofCase.NullTest:
+                    VisitNullTest(expr.NullTest, context);
+                    break;
+                case Node.NodeOneofCase.NullIfExpr:
+                    VisitNullIfExpr(expr.NullIfExpr, context);
+                    break;
                 default:
                     break;
             }

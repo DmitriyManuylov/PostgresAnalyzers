@@ -211,6 +211,25 @@ namespace PgQueryAnalyzerLib.GenericWalkers
 
         }
 
+        public virtual void ProcessParamRef_DirectTraversal(PgGenericNode node)
+        {
+
+        }
+
+        public virtual void ProcessCoalesceExpr_DirectTraversal(PgGenericNode node)
+        {
+
+        }
+
+        public virtual void ProcessNullTest_DirectTraversal(PgGenericNode node)
+        {
+
+        }
+
+        public virtual void ProcessNullIfExpr_DirectTraversal(PgGenericNode node)
+        {
+
+        }
 
         #endregion
 
@@ -402,6 +421,26 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         }
 
         public virtual void ProcessList_ReverseTraversal(PgGenericNode node)
+        {
+
+        }
+
+        public virtual void ProcessParamRef_ReverseTraversal(PgGenericNode node)
+        {
+
+        }
+
+        public virtual void ProcessCoalesceExpr_ReverseTraversal(PgGenericNode node)
+        {
+
+        }
+
+        public virtual void ProcessNullTest_ReverseTraversal(PgGenericNode node)
+        {
+
+        }
+
+        public virtual void ProcessNullIfExpr_ReverseTraversal(PgGenericNode node)
         {
 
         }

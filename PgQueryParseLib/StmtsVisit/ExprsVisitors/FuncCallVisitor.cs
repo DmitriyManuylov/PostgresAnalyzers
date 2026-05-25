@@ -19,19 +19,32 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             context.PgTreeWalker.ProcessFuncCall_DirectTraversal(node);
 
-            foreach (var arg in funcCall.Args)
+            if (funcCall.Args is not null)
             {
-                VisitExpr(arg, context);
+                foreach (var arg in funcCall.Args)
+                {
+                    VisitExpr(arg, context);
+                }
             }
 
-            var funcDef = context.GetDBFunctionPlainModel(funcCall.Funcname[0].String.Sval, funcCall.Funcname[1].String.Sval).ParsedStmt;
-
-            var stmt = new PLpgSQL_stmt
+            try
             {
-                PLpgSQLStmtBlock = funcDef!.Action.PLpgSQLStmtBlock
-            };
+                var funcDef = context.GetDBFunctionPlainModel(funcCall.Funcname[0].String.Sval, funcCall.Funcname[1].String.Sval).ParsedStmt;
 
-            StmtVisitor.VisitStmt(stmt, context);
+                if (funcDef is not null)
+                {
+                    var stmt = new PLpgSQL_stmt
+                    {
+                        PLpgSQLStmtBlock = funcDef!.Action.PLpgSQLStmtBlock
+                    };
+
+                    StmtVisitor.VisitStmt(stmt, context);
+                }
+            }
+            catch
+            {
+
+            }
 
             context.PgTreeWalker.ProcessFuncCall_ReverseTraversal(node);
         }

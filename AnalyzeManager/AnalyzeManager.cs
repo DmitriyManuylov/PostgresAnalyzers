@@ -38,6 +38,8 @@ namespace AnalyzeManagers
 
         public void Analyze(string queryText)
         {
+            string rewritedQuery = Context.RewriteParameters(queryText);
+
             if (!Context.PgTreeWalker.IsWalkerListNotEmpty())
             {
                 throw new Exception("Список анализаторов пуст");
@@ -53,7 +55,7 @@ namespace AnalyzeManagers
 
             try
             {
-                parsedStmtJson = parser.GetQueryParseTree(queryText);
+                parsedStmtJson = parser.GetQueryParseTree(rewritedQuery);
 
                 parsedExpr = ParseResult.Parser.ParseJson(parsedStmtJson);
 
@@ -66,7 +68,7 @@ namespace AnalyzeManagers
             }
             catch (Exception ex)
             {
-                parsedStmtJson = parser.GetPlPgQueryJsonParseTree(queryText);
+                parsedStmtJson = parser.GetPlPgQueryJsonParseTree(rewritedQuery);
 
                 stmtType = "plpgsql";
             }
