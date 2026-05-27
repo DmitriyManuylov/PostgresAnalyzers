@@ -20,7 +20,9 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             foreach(var cte in withClause.Ctes)
             {
+                node.SubOperation = "Cte";
                 VisitExpr(cte, context);
+                node.SubOperation = null;
             }
 
             context.PgTreeWalker.ProcessWithClause_ReverseTraversal(node);

@@ -1,4 +1,5 @@
 ﻿using DataChangeAnalyzer.Models.DBModels;
+using Google.Protobuf;
 using PgQuery;
 using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.Models;
@@ -109,6 +110,72 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
             }
 
             return text;
+        }
+
+        public PgGenericNode GetNearestNodeByType(Node.NodeOneofCase nodeOneofCase)
+        {
+            List<PgGenericNode> list = this.PgGenericNodes.ToList();
+
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (list[i].PgSqlNode?.NodeCase == nodeOneofCase)
+                {
+                    return list[i];
+                }
+            }
+
+            return null;
+        }
+
+        public PgGenericNode GetNearestNodeByType(PLpgSQL_stmt.StmtOneofCase stmtOneofCase)
+        {
+            List<PgGenericNode> list = this.PgGenericNodes.ToList();
+
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (list[i].PLpgSQL_Stmt?.StmtCase == stmtOneofCase)
+                {
+                    return list[i];
+                }
+            }
+
+            return null;
+        }
+
+        public PgGenericNode GetNearestNodeByType(Node.NodeOneofCase nodeOneofCase, Predicate<PgGenericNode> predicate)
+        {
+            List<PgGenericNode> list = this.PgGenericNodes.ToList();
+
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (list[i].PgSqlNode?.NodeCase == nodeOneofCase)
+                {
+                    if (predicate(list[i]))
+                    {
+                        return list[i];
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public PgGenericNode GetNearestNodeByType(PLpgSQL_stmt.StmtOneofCase stmtOneofCase, Predicate<PgGenericNode> predicate)
+        {
+            List<PgGenericNode> list = this.PgGenericNodes.ToList();
+
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (list[i].PLpgSQL_Stmt?.StmtCase == stmtOneofCase)
+                {
+                    if (predicate(list[i]))
+                    {
+                        return list[i];
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

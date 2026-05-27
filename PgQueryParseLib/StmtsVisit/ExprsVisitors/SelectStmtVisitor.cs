@@ -20,6 +20,8 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             if (selectStmt.TargetList != null)
             {
+                node.SubOperation = nameof(SelectStmt.TargetList);
+
                 foreach (var target in selectStmt.TargetList)
                 {
                     VisitExpr(target, context);
@@ -28,6 +30,8 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             if (selectStmt.ValuesLists != null)
             {
+                node.SubOperation = nameof(SelectStmt.ValuesLists);
+
                 foreach (var value in selectStmt.ValuesLists)
                 {
                     VisitExpr(value, context);
@@ -36,7 +40,9 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             if (selectStmt.FromClause != null)
             {
-                foreach(var fromItem in selectStmt.FromClause)
+                node.SubOperation = nameof(SelectStmt.FromClause);
+
+                foreach (var fromItem in selectStmt.FromClause)
                 {
                     VisitExpr(fromItem, context);
                 }
@@ -44,7 +50,9 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             if (selectStmt.WithClause != null)
             {
-                foreach(var cte in selectStmt.WithClause.Ctes)
+                node.SubOperation = nameof(SelectStmt.WithClause);
+
+                foreach (var cte in selectStmt.WithClause.Ctes)
                 {
                     VisitExpr(cte, context);
                 }
@@ -52,8 +60,12 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             if (selectStmt.WhereClause is not null)
             {
+                node.SubOperation = nameof(SelectStmt.WhereClause);
+
                 VisitExpr(selectStmt.WhereClause, context);
             }
+
+            node.SubOperation = null;
 
             context.PgTreeWalker.ProcessSelectStmt_ReverseTraversal(node);
         }

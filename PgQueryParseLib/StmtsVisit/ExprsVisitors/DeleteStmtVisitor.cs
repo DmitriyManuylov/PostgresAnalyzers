@@ -21,24 +21,29 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             if (deleteStmt.WhereClause is not null)
             {
+                node.SubOperation = "WhereClause";
                 VisitExpr(deleteStmt.WhereClause, context);
+                node.SubOperation = null;
             }
 
             if (deleteStmt.WithClause?.Ctes is not null)
             {
+                node.SubOperation = nameof(deleteStmt.WithClause);
                 foreach (var cte in deleteStmt.WithClause.Ctes)
-
                 {
                     VisitExpr(cte, context);
                 }
+                node.SubOperation = null;
             }
 
             if (deleteStmt.ReturningList is not null)
             {
+                node.SubOperation = nameof(DeleteStmt.ReturningList);
                 foreach (var item in deleteStmt.ReturningList)
                 {
                     VisitExpr(item, context);
                 }
+                node.SubOperation = null;
             }
 
             context.PgTreeWalker.ProcessDeleteStmt_ReverseTraversal(node);

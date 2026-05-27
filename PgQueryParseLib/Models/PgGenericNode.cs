@@ -18,6 +18,7 @@ namespace PgQueryAnalyzerLib.Models
     {
         private Node pgSqlNode;
         private PLpgSQL_stmt pLpgSQL_Stmt;
+        public string SubOperation {  get; set; }
         public PgNodeDialectType PgNodeDialectType { get; private set; }
         public Node PgSqlNode
         {

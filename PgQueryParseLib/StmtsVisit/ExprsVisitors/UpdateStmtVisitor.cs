@@ -18,23 +18,31 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             context.PgTreeWalker.ProcessUpdateStmt_DirectTraversal(node);
 
-            foreach(var targetWrap in updateStmt.TargetList)
-            {
-                var target = targetWrap.ResTarget;
+            node.SubOperation = nameof(UpdateStmt.TargetList);
 
+            foreach (var targetWrap in updateStmt.TargetList)
+            {
                 VisitExpr(targetWrap, context);
-
             }
 
-            foreach(var ret in updateStmt.ReturningList)
+            if (updateStmt.ReturningList is not null)
             {
-                VisitExpr(ret, context);
+                node.SubOperation = nameof(UpdateStmt.ReturningList);
+
+                foreach (var ret in updateStmt.ReturningList)
+                {
+                    VisitExpr(ret, context);
+                }
             }
 
-            if(updateStmt.WhereClause is not null)
+            if (updateStmt.WhereClause is not null)
             {
+                node.SubOperation = nameof(UpdateStmt.WhereClause);
+
                 VisitExpr(updateStmt.WhereClause, context);
             }
+
+            node.SubOperation = null;
 
             context.PgTreeWalker.ProcessUpdateStmt_ReverseTraversal(node);
         }

@@ -48,6 +48,18 @@ namespace Analyzers
                 }
             }
 
+            var whereClause = Context.GetNearestNodeByType(Node.NodeOneofCase.SelectStmt, node => new List<string>
+            {
+                nameof(SelectStmt.WhereClause), 
+                nameof(SelectStmt.FromClause)
+            }
+            .Contains(node.SubOperation));
+
+            if (whereClause is null)
+            {
+                return;
+            }
+
             if (typeCastStmt != null)
             {
                 analyzeModels.Add(new ParameterTypeCastAnalyzeModel
