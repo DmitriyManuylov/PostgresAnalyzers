@@ -21,6 +21,11 @@ namespace DMLOpsAnalyzer.Analyzer
     {
         private LinkedList<PgGenericNode> pgGenericNodes = new LinkedList<PgGenericNode>();
 
+        public DMLAnalyzer()
+        {
+
+        }
+
         public DMLAnalyzer(StmtsProcessingContext context) : base(context)
         {
         }

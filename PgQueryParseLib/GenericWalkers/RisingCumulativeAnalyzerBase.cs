@@ -26,6 +26,10 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         //{
         //    return AnalyzeTree;
         //}
+        public RisingCumulativeAnalyzerBase()
+        {
+
+        }
 
         protected AnalyzeTree<TPgAnalyzeNode> AnalyzeTree { get; private set; }
         public RisingCumulativeAnalyzerBase(StmtsProcessingContext context) : base(context)

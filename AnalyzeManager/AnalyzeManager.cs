@@ -24,16 +24,21 @@ namespace AnalyzeManagers
             Context = new StmtsProcessingContext();
         }
 
+        public void AddAnalyzer<TAnalyzer>() where TAnalyzer: GenericPgTreeWalkerBase, new()
+        {
+            TAnalyzer analyzer = new TAnalyzer();
+            analyzer.Context = this.Context;
+            AddWalker(analyzer);
+        }
+
         public void AddDMLOperationsAnalyzer()
         {
-            DMLAnalyzer analyzer = new DMLAnalyzer(this.Context);
-            AddWalker(analyzer);
+            AddAnalyzer<DMLAnalyzer>();
         }
 
         public void AddParametersTypeCastAnalyzer()
         {
-            ParametersTypeCastAnalyzer analyzer = new ParametersTypeCastAnalyzer(this.Context);
-            AddWalker(analyzer);
+            AddAnalyzer<ParametersTypeCastAnalyzer>();
         }
 
         public void Analyze(string queryText)

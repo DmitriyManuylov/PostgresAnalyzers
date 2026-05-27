@@ -15,6 +15,10 @@ namespace Analyzers
     {
         private List<ParameterTypeCastAnalyzeModel> analyzeModels = new();
 
+        public ParametersTypeCastAnalyzer()
+        {
+        }
+
         public ParametersTypeCastAnalyzer(StmtsProcessingContext context) : base(context)
         {
         }

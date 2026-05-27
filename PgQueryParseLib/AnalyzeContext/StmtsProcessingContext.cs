@@ -142,37 +142,43 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
             return null;
         }
 
-        public PgGenericNode GetNearestNodeByType(Node.NodeOneofCase nodeOneofCase, Predicate<PgGenericNode> predicate)
+        public PgGenericNode GetNearestNodeByType(Predicate<PgGenericNode> predicate, Node.NodeOneofCase? nodeOneofCase = null)
         {
             List<PgGenericNode> list = this.PgGenericNodes.ToList();
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
-                if (list[i].PgSqlNode?.NodeCase == nodeOneofCase)
+                if (nodeOneofCase is not null && list[i].PgSqlNode?.NodeCase != nodeOneofCase)
                 {
-                    if (predicate(list[i]))
-                    {
-                        return list[i];
-                    }
+                    continue;
                 }
+
+                if (predicate(list[i]))
+                {
+                    return list[i];
+                }
+
             }
 
             return null;
         }
 
-        public PgGenericNode GetNearestNodeByType(PLpgSQL_stmt.StmtOneofCase stmtOneofCase, Predicate<PgGenericNode> predicate)
+        public PgGenericNode GetNearestNodeByType(Predicate<PgGenericNode> predicate, PLpgSQL_stmt.StmtOneofCase? stmtOneofCase)
         {
             List<PgGenericNode> list = this.PgGenericNodes.ToList();
 
             for (int i = list.Count - 1; i >= 0; i--)
             {
-                if (list[i].PLpgSQL_Stmt?.StmtCase == stmtOneofCase)
+                if (stmtOneofCase is not null && list[i].PLpgSQL_Stmt?.StmtCase != stmtOneofCase)
                 {
-                    if (predicate(list[i]))
-                    {
-                        return list[i];
-                    }
+                    continue;
                 }
+
+                if (predicate(list[i]))
+                {
+                    return list[i];
+                }
+
             }
 
             return null;
