@@ -12,9 +12,14 @@ namespace PgQueryAnalyzerLib.GenericWalkers
 
     public class GenericPgTreeWalker : GenericPgTreeWalkerBase
     {
-        public GenericPgTreeWalker(StmtsProcessingContext context) : base(context)
+        public GenericPgTreeWalker()
         {
 
+        }
+
+        public GenericPgTreeWalker(StmtsProcessingContext context) : base(context)
+        {
+            context.PgTreeWalker = this;
         }
 
 
@@ -77,7 +82,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         {
             if (this.PgTreeWalkerList is null || this.PgTreeWalkerList.Count < 1)
             {
-                throw new Exception("Не задано ни одного обработчика дерева вызовов");
+                throw new Exception("Не задано ни одного обработчика дерева запроса");
             }
 
             foreach (var walker in this.PgTreeWalkerList)

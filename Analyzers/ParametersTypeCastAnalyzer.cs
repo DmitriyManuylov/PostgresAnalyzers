@@ -52,7 +52,7 @@ namespace Analyzers
                 }
             }
 
-            var whereClause = Context.GetNearestNodeByType(Node.NodeOneofCase.SelectStmt, node => new List<string>
+            var whereClause = Context.GetNearestNodeByType(node => new List<string>
             {
                 nameof(SelectStmt.WhereClause), 
                 nameof(SelectStmt.FromClause)

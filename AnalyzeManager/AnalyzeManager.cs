@@ -10,25 +10,68 @@ using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
 using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using PgQueryParser;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace AnalyzeManagers
 {
     public class AnalyzeManager
     {
-        private StmtsProcessingContext Context { get; set; }
+        private List<StmtsProcessingContext> ContextList;
+        private List<GenericPgTreeWalker> PgTreeWalkerList;
+        private List<Type> analyzersTypes;
+
+        string parsedStmtJson;
+        private ParseResult parsedPgSqlExprs;
+        private List<PLpgSQL_stmt> parsedPlPgSqlStmts;
+        private List<string> ParametersList;
+        private string stmtType;
 
         public bool IsResultSet { get; private set; } = false;
 
-        public AnalyzeManager()
+        private string query;
+        private string rewritedQuery;
+
+        public AnalyzeManager(string queryText)
         {
-            Context = new StmtsProcessingContext();
+            query = queryText;
+            (this.rewritedQuery, this.ParametersList) = this.RewriteParameters(queryText);
+            ParseQuery();
+
+            switch (this.stmtType)
+            {
+                case "pgsql":
+                    ContextList = new List<StmtsProcessingContext>(parsedPgSqlExprs.Stmts.Count);
+                    PgTreeWalkerList = new List<GenericPgTreeWalker>(parsedPgSqlExprs.Stmts.Count);
+                    break;
+
+                case "plpgsql":
+                    ContextList = new List<StmtsProcessingContext>(parsedPlPgSqlStmts.Count);
+                    PgTreeWalkerList = new List<GenericPgTreeWalker>(parsedPlPgSqlStmts.Count);
+                    break;
+            }
+
+            for (int i = 0; i < ContextList!.Capacity; i++)
+            {
+                var context = new StmtsProcessingContext(this.ParametersList);
+                var walker = new GenericPgTreeWalker(context);
+                ContextList.Add(context);
+
+                PgTreeWalkerList!.Add(walker);
+            }
+
+            analyzersTypes = new List<Type>();
         }
 
         public void AddAnalyzer<TAnalyzer>() where TAnalyzer: GenericPgTreeWalkerBase, new()
         {
-            TAnalyzer analyzer = new TAnalyzer();
-            analyzer.Context = this.Context;
-            AddWalker(analyzer);
+            analyzersTypes.Add(typeof(TAnalyzer));
+
+            for (int i = 0; i < this.PgTreeWalkerList.Count; i++)
+            {
+                TAnalyzer analyzer = new TAnalyzer();
+                analyzer.Context = this.ContextList[i];
+                this.PgTreeWalkerList[i].AddWalker(analyzer);
+            }
         }
 
         public void AddDMLOperationsAnalyzer()
@@ -41,30 +84,78 @@ namespace AnalyzeManagers
             AddAnalyzer<ParametersTypeCastAnalyzer>();
         }
 
-        public void Analyze(string queryText)
+        public void Analyze()
         {
-            string rewritedQuery = Context.RewriteParameters(queryText);
 
-            if (!Context.PgTreeWalker.IsWalkerListNotEmpty())
+            if (!analyzersTypes.Any())
             {
                 throw new Exception("Список анализаторов пуст");
             }
 
+            for (int i = 0; i < ContextList.Count; i++)
+            {
+                var context = ContextList[i];
+                switch (stmtType)
+                {
+                    case "pgsql":
+                        var expr = parsedPgSqlExprs.Stmts[i].Stmt;
+                        ExprVisitor.VisitExpr(expr, context);
+                        break;
+
+                    case "plpgsql":
+                        var stmt = parsedPlPgSqlStmts[i];
+                        StmtVisitor.VisitStmt(stmt, context);
+                        break;
+                }
+            }
+
+            IsResultSet = true;
+        }
+
+        public List<TPgTreeWalker> GetAnalyzerByType<TPgTreeWalker>() where TPgTreeWalker : GenericPgTreeWalkerBase
+        {
+            var result = this.ContextList.Select(item => item.GetTreeWalkerByType<TPgTreeWalker>()).ToList();
+
+            return result;
+        }
+
+        public List<AnalyzeTree<DMLAnalyzeNode>> GetDMLOperationsResult()
+        {
+            ThrowExceptionIfNotSetResult();
+
+            var analyzeResult = GetAnalyzerByType<DMLAnalyzer>().Select(item => item.GetResult()).ToList();
+
+            return analyzeResult;
+        }
+
+        public List<List<ParameterTypeCastAnalyzeModel>> GetParameterTypeCastAnalyzeResult()
+        {
+            ThrowExceptionIfNotSetResult();
+
+            var analyzeResult = GetAnalyzerByType<ParametersTypeCastAnalyzer>().Select(item => item.GetResult()).ToList();
+
+            return analyzeResult;
+        }
+
+        private void ThrowExceptionIfNotSetResult()
+        {
+            if (!IsResultSet)
+            {
+                throw new Exception();
+            }
+        }
+
+        private void ParseQuery()
+        {
             var parser = new PostgreSqlQueryParser();
-
-            string parsedStmtJson;
-
-            string stmtType = null;
-            ParseResult parsedExpr = null;
-            List<PLpgSQL_stmt> parsedStmts;
 
             try
             {
                 parsedStmtJson = parser.GetQueryParseTree(rewritedQuery);
 
-                parsedExpr = ParseResult.Parser.ParseJson(parsedStmtJson);
+                parsedPgSqlExprs = ParseResult.Parser.ParseJson(parsedStmtJson);
 
-                if (parsedExpr.Stmts.FirstOrDefault().Stmt.NodeCase == Node.NodeOneofCase.DoStmt)
+                if (parsedPgSqlExprs.Stmts.FirstOrDefault().Stmt.NodeCase == Node.NodeOneofCase.DoStmt)
                 {
                     throw new Exception();
                 }
@@ -74,69 +165,31 @@ namespace AnalyzeManagers
             catch (Exception ex)
             {
                 parsedStmtJson = parser.GetPlPgQueryJsonParseTree(rewritedQuery);
-
+                List<JsonDocument> list = JsonSerializer.Deserialize<List<JsonDocument>>(parsedStmtJson);
+                parsedPlPgSqlStmts = list.Select(item => PLpgSQL_stmt.Parser.ParseJson(item.RootElement.ToString())).ToList();
                 stmtType = "plpgsql";
             }
+        }
 
-            switch (stmtType)
+        private (string RewritedText, List<string> ParamList) RewriteParameters(string queryText)
+        {
+            string patternColon = @"(?:(?:(?<!:):(?![:=]))|@)\w+";
+
+            Regex regex = new Regex(patternColon);
+
+            MatchCollection matches = regex.Matches(queryText);
+
+            List<string> parameters = matches.Select(m => m.Value.Substring(1)).Distinct().ToList();
+
+            string text = queryText;
+
+            foreach (Match match in matches.OrderByDescending(item => item.Value.Length))
             {
-                case "pgsql":
-                    if (parsedExpr is null)
-                    {
-                        throw new NullReferenceException();
-                    }
-                    ExprVisitor.VisitExpr(parsedExpr.Stmts.FirstOrDefault().Stmt, this.Context);
-                    break;
-                case "plpgsql":
-                    List<JsonDocument> list = JsonSerializer.Deserialize<List<JsonDocument>>(parsedStmtJson);
-                    parsedStmts = list.Select(item => PLpgSQL_stmt.Parser.ParseJson(item.RootElement.ToString())).ToList();
-                    foreach (var stmt in parsedStmts)
-                    {
-                        StmtVisitor.VisitStmt(stmt, this.Context);
-                    }
-                    break;
+                text = text.Replace(match.Value, $"${parameters.IndexOf(match.Value.Substring(1)) + 1}");
+
             }
 
-            IsResultSet = true;
-        }
-
-        public TPgTreeWalker GetAnalyzerByType<TPgTreeWalker>() where TPgTreeWalker : GenericPgTreeWalkerBase
-        {
-            var result = this.Context.GetTreeWalkerByType<TPgTreeWalker>();
-
-            return result;
-        }
-
-        public AnalyzeTree<DMLAnalyzeNode> GetDMLOperationsResult()
-        {
-            ThrowExceptionIfNotSetResult();
-
-            var analyzer = GetAnalyzerByType<DMLAnalyzer>();
-
-            return analyzer.GetResult();
-        }
-
-        public List<ParameterTypeCastAnalyzeModel> GetParameterTypeCastAnalyzeResult()
-        {
-            ThrowExceptionIfNotSetResult();
-
-            var analyzer = GetAnalyzerByType<ParametersTypeCastAnalyzer>();
-
-            return analyzer.GetResult();
-        }
-
-        private void AddWalker(GenericPgTreeWalkerBase analyzer)
-        {
-            this.Context.PgTreeWalker ??= new GenericPgTreeWalker(this.Context);
-            this.Context.PgTreeWalker.AddWalker(analyzer);
-        }
-
-        private void ThrowExceptionIfNotSetResult()
-        {
-            if (!IsResultSet)
-            {
-                throw new Exception();
-            }
+            return (text, parameters);
         }
     }
 }

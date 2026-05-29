@@ -20,9 +20,10 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
     public class StmtsProcessingContext
     {
 
-        public StmtsProcessingContext()
+        public StmtsProcessingContext(List<string> queryParameters)
         {
             PgGenericNodes = new();
+            QueryParameters = queryParameters;
         }
 
         public List<string> QueryParameters { get; private set; }
@@ -89,27 +90,6 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
         {
             PgTreeWalker.ProcessReverseTraversal(node);
             return PgGenericNodes.Pop();
-        }
-
-        public string RewriteParameters(string queryText)
-        {
-            string patternColon = @"(?:(?:(?<!:):(?![:=]))|@)\w+";
-
-            Regex regex = new Regex(patternColon);
-
-            MatchCollection matches = regex.Matches(queryText);
-
-            QueryParameters = matches.Select(m => m.Value.Substring(1)).Distinct().ToList();
-
-            string text = queryText;
-
-            foreach (Match match in matches.OrderByDescending(item => item.Value.Length))
-            {
-                text = text.Replace(match.Value, $"${QueryParameters.IndexOf(match.Value.Substring(1)) + 1}");
-                
-            }
-
-            return text;
         }
 
         public PgGenericNode GetNearestNodeByType(Node.NodeOneofCase nodeOneofCase)
