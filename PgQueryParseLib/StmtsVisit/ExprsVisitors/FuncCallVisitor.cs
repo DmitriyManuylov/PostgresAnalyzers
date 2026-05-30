@@ -44,7 +44,7 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
                     funcDef = context.GetDBFunctionPlainModel(funcCall.Funcname[0].String.Sval, funcCall.Funcname[1].String.Sval).ParsedStmt;
                 }
 
-                if (funcDef is not null)
+                if (funcDef is not null && !context.IgnoreFuncCalls)
                 {
                     var stmt = new PLpgSQL_stmt
                     {

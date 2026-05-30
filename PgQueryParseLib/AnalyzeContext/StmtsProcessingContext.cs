@@ -9,6 +9,7 @@ using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using PgQueryParser;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -26,6 +27,8 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
             PgGenericNodes = new();
             QueryParameters = queryParameters;
         }
+
+        public bool IgnoreFuncCalls { get; set; } = bool.TryParse(ConfigurationManager.AppSettings.Get("IgnoreFuncCalls"), out bool value) ? value : false;
 
         public List<string> QueryParameters { get; private set; }
 

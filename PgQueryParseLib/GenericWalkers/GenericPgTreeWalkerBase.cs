@@ -11,6 +11,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
     public abstract class GenericPgTreeWalkerBase
     {
         public StmtsProcessingContext Context { get; set; }
+
         public GenericPgTreeWalkerBase()
         {
 
