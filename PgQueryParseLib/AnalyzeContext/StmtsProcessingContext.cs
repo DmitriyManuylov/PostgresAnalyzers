@@ -35,10 +35,11 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
 
         HashSet<TableModel> DBTablesList { get; set; }
         public List<DBFunctionPlainModel> DBFunctionList { get; set; } = new List<DBFunctionPlainModel>();
+        public Dictionary<string, DBFunctionPlainModel> DBFunctionDictionary { get; set; }
         public List<DBTriggerPlainModel> DbTriggerList { get; set; }
         public TableModel GetDBTableModel(string nspName, string tableName)
         {
-            if(DBTablesList.TryGetValue(new TableModel(tableName, nspName), out var tableModel))
+            if (DBTablesList.TryGetValue(new TableModel(tableName, nspName), out var tableModel))
             {
                 return tableModel;
             }
@@ -48,7 +49,7 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
 
         public DBFunctionPlainModel GetDBFunctionPlainModel(string nspName, string funcName)
         {
-            var result = DBFunctionList.FirstOrDefault(item => item.NspName == nspName && item.FuncName == funcName);
+            var result = DBFunctionDictionary.GetValueOrDefault($"{nspName}.{funcName}");
 
             if (result is null)
             {
@@ -164,6 +165,30 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Проверка наличия циклических вызовов функций.
+        /// </summary>
+        /// <param name="nspName">Пространство имен функции.</param>
+        /// <param name="funcName">Название функции.</param>
+        /// <returns></returns>
+        public bool CheckExistsFuncCallCycle(string nspName, string funcName)
+        {
+            List<PgGenericNode> list = this.PgGenericNodes
+                .Where(item =>
+                    item.PgSqlNode?.NodeCase == Node.NodeOneofCase.FuncCall
+                        &&
+                    item.PgSqlNode.FuncCall.Funcname.Count == 2).ToList();
+
+            var names = list.Select(item => new
+            {
+                nspName = item.PgSqlNode.FuncCall.Funcname[0].String.Sval,
+                funcName = item.PgSqlNode.FuncCall.Funcname[1].String.Sval
+            });
+
+
+            return names.Any(item => item.nspName == nspName && item.funcName == funcName);
         }
     }
 }

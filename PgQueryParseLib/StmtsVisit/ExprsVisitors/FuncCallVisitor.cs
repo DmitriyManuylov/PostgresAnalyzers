@@ -17,6 +17,12 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             var node = context.PgGenericNodes.Peek();
 
+            int funNameSegmentsCount = funcCall.Funcname.Count;
+
+            string nspName = funNameSegmentsCount == 2 ? funcCall.Funcname[0].String.Sval : null;
+            string funcName = funNameSegmentsCount == 2 ? funcCall.Funcname[1].String.Sval :
+                funNameSegmentsCount == 1 ? funcCall.Funcname[0].String.Sval : null;
+
             context.PgTreeWalker.ProcessFuncCall_DirectTraversal(node);
 
             if (funcCall.Args is not null)
@@ -31,7 +37,9 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
             {
                 PLpgSQL_stmt funcDef = default;
 
-                if (funcCall.Funcname.Count == 2 && funcCall.Funcname[0].String.Sval != "pg_catalog")
+                bool isExistsFuncCallCycle = funcCall.Funcname.Count == 2 ? context.CheckExistsFuncCallCycle(nspName, funcName) : false;
+
+                if (funcCall.Funcname.Count == 2 && !isExistsFuncCallCycle && funcCall.Funcname[0].String.Sval != "pg_catalog")
                 {
                     funcDef = context.GetDBFunctionPlainModel(funcCall.Funcname[0].String.Sval, funcCall.Funcname[1].String.Sval).ParsedStmt;
                 }

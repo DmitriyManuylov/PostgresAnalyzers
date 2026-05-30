@@ -53,6 +53,10 @@ namespace AnalyzeManagers
 
             functions ??= Task.Run(() => dbEntitiesService.DownloadDBFunctionsAsync()).GetAwaiter().GetResult();
 
+            Dictionary<string, DBFunctionPlainModel> functionsDictionary = new Dictionary<string, DBFunctionPlainModel>();
+
+            functions.ForEach(f => functionsDictionary.TryAdd($"{f.NspName}.{f.FuncName}", f));
+
             switch (this.stmtType)
             {
                 case "pgsql":
@@ -70,6 +74,7 @@ namespace AnalyzeManagers
             {
                 var context = new StmtsProcessingContext(this.ParametersList);
                 context.DBFunctionList = functions;
+                context.DBFunctionDictionary = functionsDictionary;
                 var walker = new GenericPgTreeWalker(context);
                 ContextList.Add(context);
 
