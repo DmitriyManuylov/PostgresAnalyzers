@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace PgQueryAnalyzerLib.Services
 {
-    class DbEntitiesService
+    public class DbEntitiesService
     {
         IDbConnection connection;
         string _connectionString = ConfigurationManager.ConnectionStrings["PostgresDB"].ConnectionString;
@@ -114,6 +114,7 @@ from pg_catalog.pg_proc functions
 inner join pg_catalog.pg_namespace fun_nsp on fun_nsp.oid = functions.pronamespace
 where
     functions.prokind = 'f'
+    and fun_nsp.NspName <> 'pg_catalog'
 ";
             #endregion
             using (var connection = new NpgsqlConnection(_connectionString))

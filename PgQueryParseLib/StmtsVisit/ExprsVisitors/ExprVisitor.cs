@@ -123,6 +123,9 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
                 case Node.NodeOneofCase.NullIfExpr:
                     VisitNullIfExpr(expr.NullIfExpr, context);
                     break;
+                case Node.NodeOneofCase.PlassignStmt:
+                    VisitPlAssignStmt(expr.PlassignStmt, context);
+                    break;
                 default:
                     break;
             }

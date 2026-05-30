@@ -6,9 +6,12 @@ using PgQueryAnalyzerLib;
 using PgQueryAnalyzerLib.AnalyzeContext;
 using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.GenericWalkers.Models;
+using PgQueryAnalyzerLib.Services;
+using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
 using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
 using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using PgQueryParser;
+using System.Configuration;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -37,6 +40,19 @@ namespace AnalyzeManagers
             (this.rewritedQuery, this.ParametersList) = this.RewriteParameters(queryText);
             ParseQuery();
 
+            DbEntitiesService dbEntitiesService = new DbEntitiesService();
+
+            string functionsDefFile = ConfigurationManager.AppSettings.Get("FunctionsDefinitions");
+
+            List<DBFunctionPlainModel> functions = default;
+            if (functionsDefFile is not null && File.Exists(functionsDefFile))
+            {
+                string fileText = File.ReadAllText(functionsDefFile);
+                functions = JsonSerializer.Deserialize<List<DBFunctionPlainModel>>(fileText);
+            }
+
+            functions ??= Task.Run(() => dbEntitiesService.DownloadDBFunctionsAsync()).GetAwaiter().GetResult();
+
             switch (this.stmtType)
             {
                 case "pgsql":
@@ -53,6 +69,7 @@ namespace AnalyzeManagers
             for (int i = 0; i < ContextList!.Capacity; i++)
             {
                 var context = new StmtsProcessingContext(this.ParametersList);
+                context.DBFunctionList = functions;
                 var walker = new GenericPgTreeWalker(context);
                 ContextList.Add(context);
 
@@ -60,6 +77,7 @@ namespace AnalyzeManagers
             }
 
             analyzersTypes = new List<Type>();
+
         }
 
         public void AddAnalyzer<TAnalyzer>() where TAnalyzer: GenericPgTreeWalkerBase, new()

@@ -14,6 +14,6 @@ namespace PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels
         public string? FuncOid { get; set; }
         public string? FuncName { get; set; }
         public string? FuncDef{ get; set; }
-        public PLpgSQL_function? ParsedStmt { get; set; }
+        public PLpgSQL_stmt? ParsedStmt { get; set; }
     }
 }

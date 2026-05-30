@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -49,12 +50,12 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
         {
             var result = DBFunctionList.FirstOrDefault(item => item.NspName == nspName && item.FuncName == funcName);
 
-            if(result is null)
+            if (result is null)
             {
                 throw new Exception($"Модель функции {nspName}.{funcName} не найдена");
             }
 
-            if(result.ParsedStmt is not null)
+            if (result.ParsedStmt is not null)
             {
                 return result;
             }
@@ -62,15 +63,16 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
             PostgreSqlQueryParser parser = new PostgreSqlQueryParser();
 
             var plPgParseTree = parser.GetPlPgQueryJsonParseTree(result.FuncDef!);
-
-            var parseResult = FunctionWrapper.Parser.ParseJson(plPgParseTree);
+            List<JsonDocument> list = JsonSerializer.Deserialize<List<JsonDocument>>(plPgParseTree);
+            var parsedPlPgSqlStmts = list.Select(item => PLpgSQL_stmt.Parser.ParseJson(item.RootElement.ToString())).ToList();
+            var parseResult = parsedPlPgSqlStmts.First();
 
             if (parseResult.PLpgSQLFunction is null)
             {
                 throw new Exception("Ошибка разбора тела функции");
             }
 
-            result.ParsedStmt = parseResult.PLpgSQLFunction;
+            result.ParsedStmt = parseResult;
 
 
             return result;

@@ -29,13 +29,18 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
 
             try
             {
-                var funcDef = context.GetDBFunctionPlainModel(funcCall.Funcname[0].String.Sval, funcCall.Funcname[1].String.Sval).ParsedStmt;
+                PLpgSQL_stmt funcDef = default;
+
+                if (funcCall.Funcname.Count == 2 && funcCall.Funcname[0].String.Sval != "pg_catalog")
+                {
+                    funcDef = context.GetDBFunctionPlainModel(funcCall.Funcname[0].String.Sval, funcCall.Funcname[1].String.Sval).ParsedStmt;
+                }
 
                 if (funcDef is not null)
                 {
                     var stmt = new PLpgSQL_stmt
                     {
-                        PLpgSQLStmtBlock = funcDef!.Action.PLpgSQLStmtBlock
+                        PLpgSQLStmtBlock = funcDef.PLpgSQLFunction.Action.PLpgSQLStmtBlock
                     };
 
                     StmtVisitor.VisitStmt(stmt, context);

@@ -3567,6 +3567,8 @@ message PLpgDatumNode {
 	PLpgSQL_type PLpgSQL_type = 2 [json_name="PLpgSQL_type"];
 	PLpgSQL_var PLpgSQL_var = 3 [json_name="PLpgSQL_var"];
 	PLpgSQL_row PLpgSQL_row = 4 [json_name="PLpgSQL_row"];
+    PLpgSQL_rec PLpgSQL_rec = 5 [json_name="PLpgSQL_rec"];
+    PLpgSQL_recfield PLpgSQL_recfield = 6 [json_name="PLpgSQL_recfield"];
   }
 }
 
@@ -3581,6 +3583,7 @@ message Action {
 
 message PLpgSQL_stmt_block {
   int32 lineno = 1;
+
   repeated PLpgSQL_stmt body = 2;
 }
 
@@ -3739,6 +3742,17 @@ message PLpgSQL_row {
   string refname = 1;
   int32 lineno = 2;
   repeated RowFieldListItem fields = 3;
+}
+
+message PLpgSQL_rec{
+    string refname = 1;
+    int32 lineno = 2;
+    int32 dno = 3;
+}
+
+message PLpgSQL_recfield {
+    string fieldname = 1;
+    int32 recparentno = 2;
 }
 
 message ExprWrapper {
