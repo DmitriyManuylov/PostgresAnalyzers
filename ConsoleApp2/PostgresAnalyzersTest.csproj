@@ -10,6 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AnalyzeManager\AnalyzeManagers.csproj" />
+    <ProjectReference Include="..\AnalyzeManager\PgQuery.AnalyzeManagers.csproj" />
   </ItemGroup>
 </Project>

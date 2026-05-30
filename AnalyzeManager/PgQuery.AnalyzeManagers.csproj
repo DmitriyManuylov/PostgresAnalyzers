@@ -4,11 +4,11 @@
 	  <Version>1.0.1</Version>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PgQueryParseLib\PgQueryAnalyzerLib.csproj" />
+    <ProjectReference Include="..\Analyzers\PgQuery.Analyzers.csproj" />
+    <ProjectReference Include="..\DMLOpsAnalyzer\PgQuery.DMLOpsAnalyzer.csproj" />
   </ItemGroup>
 
 </Project>

@@ -26,7 +26,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\PgQueryParser\PgQueryParser.csproj" />
+    <ProjectReference Include="..\PgQueryParser\PgQuery.Parser.csproj" />
   </ItemGroup>
 
 
