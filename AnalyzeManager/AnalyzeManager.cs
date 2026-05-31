@@ -19,6 +19,9 @@ namespace AnalyzeManagers
 {
     public class AnalyzeManager
     {
+        private static List<DBFunctionPlainModel> Functions;
+        private static Dictionary<string, DBFunctionPlainModel> FunctionsDictionary;
+
         private List<StmtsProcessingContext> ContextList;
         private List<GenericPgTreeWalker> PgTreeWalkerList;
         private List<Type> analyzersTypes;
@@ -34,15 +37,9 @@ namespace AnalyzeManagers
         private string query;
         private string rewritedQuery;
 
-        public AnalyzeManager(string queryText)
+        static AnalyzeManager()
         {
-            query = queryText;
-            (this.rewritedQuery, this.ParametersList) = this.RewriteParameters(queryText);
-            ParseQuery();
-
-            DbEntitiesService dbEntitiesService = new DbEntitiesService();
-
-            string functionsDefFile = ConfigurationManager.AppSettings.Get("FunctionsDefinitions");
+            string functionsDefFile = ConfigurationManager.AppSettings.Get("FunctionsDefinitions") ?? "FunctionsDefinitions.json";
 
             List<DBFunctionPlainModel> functions = default;
             if (functionsDefFile is not null && File.Exists(functionsDefFile))
@@ -50,12 +47,30 @@ namespace AnalyzeManagers
                 string fileText = File.ReadAllText(functionsDefFile);
                 functions = JsonSerializer.Deserialize<List<DBFunctionPlainModel>>(fileText);
             }
+            DbEntitiesService dbEntitiesService = new DbEntitiesService();
 
-            functions ??= Task.Run(() => dbEntitiesService.DownloadDBFunctionsAsync()).GetAwaiter().GetResult();
+            if (functions is null)
+            {
+                functions = Task.Run(() => dbEntitiesService.DownloadDBFunctionsAsync()).GetAwaiter().GetResult();
+
+                string json = JsonSerializer.Serialize(functions);
+                string file = !string.IsNullOrWhiteSpace(functionsDefFile) ? functionsDefFile : "FunctionsDefinitions.json";
+                File.WriteAllText(functionsDefFile, json);
+            }
 
             Dictionary<string, DBFunctionPlainModel> functionsDictionary = new Dictionary<string, DBFunctionPlainModel>();
 
             functions.ForEach(f => functionsDictionary.TryAdd($"{f.NspName}.{f.FuncName}", f));
+
+            Functions = functions;
+            FunctionsDictionary = functionsDictionary;
+        }
+
+        public AnalyzeManager(string queryText)
+        {
+            query = queryText;
+            (this.rewritedQuery, this.ParametersList) = this.RewriteParameters(queryText);
+            ParseQuery();
 
             switch (this.stmtType)
             {
@@ -73,8 +88,8 @@ namespace AnalyzeManagers
             for (int i = 0; i < ContextList!.Capacity; i++)
             {
                 var context = new StmtsProcessingContext(this.ParametersList);
-                context.DBFunctionList = functions;
-                context.DBFunctionDictionary = functionsDictionary;
+                context.DBFunctionList = Functions;
+                context.DBFunctionDictionary = FunctionsDictionary;
                 var walker = new GenericPgTreeWalker(context);
                 ContextList.Add(context);
 
