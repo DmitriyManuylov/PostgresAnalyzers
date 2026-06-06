@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using DataChangeAnalyzer.Models.DBModels;
 using Npgsql;
+using PgQuery;
+using PgQuery.AnalyzerLib.Services.Models.DbModels.PlainModels;
 using PgQueryAnalyzerLib.Services.Models.DbModels;
 using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
 using System;
@@ -183,6 +185,79 @@ left join pg_catalog.pg_namespace tr_proc_nsp on tr_proc_nsp.oid = trigger_proc.
             }
         }
 
+        public async Task<List<ColumnPlainModel>> DownloadDbColumnsAsync()
+        {
+            IEnumerable<ColumnPlainModel> result;
+            const string sql = @"
+select 
+    col.attname as ColumnName,
+    type.typname as TypeName,
+    case when (type.typname = 'bpchar' or type.typname = 'varchar') and col.atttypmod > 0
+    	then col.atttypmod - 4
+    	else col.atttypmod
+    end as TypeMode,
+    relation.relname as TableName,
+    nsp.nspname as SchemaName,
+    col.attnum as ColOrder
+from pg_catalog.pg_class relation
+inner join pg_catalog.pg_attribute col on col.attrelid = relation.oid
+inner join pg_catalog.pg_namespace nsp on nsp.oid = relation.relnamespace
+inner join pg_catalog.pg_type type on type.oid = col.atttypid
+    where nsp.nspname not like 'pg_%'
+    and relation.relkind = 'r'
+    and col.attnum > 0
+order by
+    nsp.oid,
+    relation.oid,
+    col.attnum
+";
+
+            using (var dbConnection = new NpgsqlConnection(_connectionString))
+            {
+                result = await dbConnection.QueryAsync<ColumnPlainModel>(sql);
+            }
+
+            return result.AsList();
+        }
+
+        public async Task<List<IndexPlainModel>> DownloadDbIndicesAsync()
+        {
+            IEnumerable<IndexPlainModel> result;
+            const string sql = @"
+select
+    relation.relname as TableName,
+    nsp.nspname as SchemaName,
+    col.attname as ColumnName,
+    col.attnum as ColumnOrder,
+    index_class.relname as IndexName,
+    index.indisunique as IsUnique,
+    index.indnatts as IndexKeyCount,
+    index.indnkeyatts as IndexKeyColsCount,
+    pg_get_expr(index.indpred, index.indrelid) AS IndexWhereClause,
+    pg_get_indexdef(index.indexrelid) AS FullIndexDefinition
+from pg_catalog.pg_class relation
+inner join pg_catalog.pg_namespace nsp on nsp.oid = relation.relnamespace
+inner join pg_catalog.pg_index index on index.indrelid = relation.oid
+inner join pg_catalog.pg_class index_class on index_class.oid = index.indexrelid
+left join pg_catalog.pg_attribute col on col.attrelid = relation.oid and col.attnum = any(index.indkey)
+    where nsp.nspname not like 'pg_%'
+    and relation.relkind = 'r'
+    and coalesce(col.attnum, 1) > 0
+order by
+    nsp.oid,
+    relation.oid,
+    index_class.relname,
+    col.attnum
+";
+
+            using (var dbConnection = new NpgsqlConnection(_connectionString))
+            {
+                result = await dbConnection.QueryAsync<IndexPlainModel>(sql);
+            }
+
+            return result.AsList();
+        }
+
         public async Task<Dictionary<TableModel, TableModel>> BuildGraph()
         {
             _foreignKeyMappingModels = await DownloadDBStructureAsync();
@@ -244,6 +319,6 @@ left join pg_catalog.pg_namespace tr_proc_nsp on tr_proc_nsp.oid = trigger_proc.
             return dict;
         }
 
-
+        
     }
 }

@@ -236,6 +236,16 @@ namespace PgQueryAnalyzerLib.GenericWalkers
 
         }
 
+        public virtual void ProcessIndexStmt_DirectTraversal(PgGenericNode node)
+        {
+
+        }
+
+        public virtual void ProcessIndexElem_DirectTraversal(PgGenericNode node)
+        {
+
+        }
+
         #endregion
 
         #region Обратный проход
@@ -448,6 +458,16 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         public virtual void ProcessNullIfExpr_ReverseTraversal(PgGenericNode node)
         {
 
+        }
+
+        public virtual void ProcessIndexStmt_ReverseTraversal(PgGenericNode node)
+        {
+            
+        }
+
+        public virtual void ProcessIndexElem_ReverseTraversal(PgGenericNode node)
+        {
+            
         }
 
         #endregion

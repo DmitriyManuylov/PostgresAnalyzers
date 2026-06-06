@@ -1,6 +1,7 @@
 ﻿using DataChangeAnalyzer.Models.DBModels;
 using Google.Protobuf;
 using PgQuery;
+using PgQuery.AnalyzerLib.Services.Models.DbModels.PlainModels;
 using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.Models;
 using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
@@ -36,7 +37,7 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
 
         public Stack<PgGenericNode> PgGenericNodes { get; private set; }
 
-        HashSet<TableModel> DBTablesList { get; set; }
+        public HashSet<TableModel> DBTablesList { get; set; }
         public List<DBFunctionPlainModel> DBFunctionList { get; set; } = new List<DBFunctionPlainModel>();
         public Dictionary<string, DBFunctionPlainModel> DBFunctionDictionary { get; set; }
         public List<DBTriggerPlainModel> DbTriggerList { get; set; }
@@ -190,8 +191,9 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
                 funcName = item.PgSqlNode.FuncCall.Funcname[1].String.Sval
             });
 
-
             return names.Any(item => item.nspName == nspName && item.funcName == funcName);
         }
+
+
     }
 }

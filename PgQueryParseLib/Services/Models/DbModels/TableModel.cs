@@ -1,4 +1,5 @@
 ﻿
+using PgQuery.AnalyzerLib.Services.Models.DbModels;
 using PgQueryAnalyzerLib.Services.Models.DbModels;
 using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
 using System;
@@ -11,6 +12,11 @@ namespace DataChangeAnalyzer.Models.DBModels
 {
     public class TableModel: BaseModel
     {
+        public TableModel()
+        {
+
+        }
+
         public TableModel(int id, string name, int nspId, string nspName): base(id, name) 
         {
             DBSchemaModel = new DBSchemaModel(nspId, nspName);
@@ -25,7 +31,8 @@ namespace DataChangeAnalyzer.Models.DBModels
         public List<(TableModel LinkedTable, ForeignKeyMappingModel ForeignKeyMappingModel)> LinkedTables { get; set; }
         public List<DBTriggerPlainModel> TableTriggers { get; set; }
         public DBSchemaModel DBSchemaModel { get; set; }
-
+        public List<ColumnModel> Columns { get; set; }
+        public List<IndexModel> Indices { get; set; }
         public override bool Equals(object? obj)
         {
             if (obj is not TableModel o)

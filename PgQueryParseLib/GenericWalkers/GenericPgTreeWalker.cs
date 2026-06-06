@@ -418,6 +418,45 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             }
         }
 
+        public override void ProcessDirectTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessDirectTraversal(node);
+            }
+        }
+
+        public override void ProcessRowExpr_DirectTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessRowExpr_DirectTraversal(node);
+            }
+        }
+
+        public override void ProcessMultiAssignRef_DirectTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessMultiAssignRef_DirectTraversal(node);
+            }
+        }
+        public override void ProcessIndexStmt_DirectTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessIndexStmt_DirectTraversal(node);
+            }
+        }
+
+        public override void ProcessIndexElem_DirectTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessIndexElem_DirectTraversal(node);
+            }
+        }
+
         #endregion
 
         #region Обратный проход
@@ -701,13 +740,12 @@ namespace PgQueryAnalyzerLib.GenericWalkers
                 item.ProcessDropStmt_ReverseTraversal(node);
             }
         }
-        #endregion
 
-        public override void ProcessDirectTraversal(PgGenericNode node)
+        public override void ProcessMultiAssignRef_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessDirectTraversal(node);
+                item.ProcessMultiAssignRef_ReverseTraversal(node);
             }
         }
 
@@ -719,35 +757,11 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             }
         }
 
-        public override void ProcessRowExpr_DirectTraversal(PgGenericNode node)
-        {
-            foreach (var item in PgTreeWalkerList)
-            {
-                item.ProcessRowExpr_DirectTraversal(node);
-            }
-        }
-
         public override void ProcessRowExpr_ReverseTraversal(PgGenericNode node)
         {
-            foreach(var item in PgTreeWalkerList)
+            foreach (var item in PgTreeWalkerList)
             {
                 item.ProcessRowExpr_ReverseTraversal(node);
-            }
-        }
-
-        public override void ProcessMultiAssignRef_DirectTraversal(PgGenericNode node)
-        {
-            foreach (var item in PgTreeWalkerList)
-            {
-                item.ProcessMultiAssignRef_DirectTraversal(node);
-            }
-        }
-
-        public override void ProcessMultiAssignRef_ReverseTraversal(PgGenericNode node)
-        {
-            foreach (var item in PgTreeWalkerList)
-            {
-                item.ProcessMultiAssignRef_ReverseTraversal(node);
             }
         }
 
@@ -790,5 +804,22 @@ namespace PgQueryAnalyzerLib.GenericWalkers
                 item.ProcessNullIfExpr_ReverseTraversal(node);
             }
         }
+
+        public override void ProcessIndexStmt_ReverseTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessIndexStmt_ReverseTraversal(node);
+            }
+        }
+
+        public override void ProcessIndexElem_ReverseTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessIndexElem_ReverseTraversal(node);
+            }
+        }
+        #endregion
     }
 }

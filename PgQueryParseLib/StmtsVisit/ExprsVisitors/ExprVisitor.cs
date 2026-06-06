@@ -126,6 +126,12 @@ namespace PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors
                 case Node.NodeOneofCase.PlassignStmt:
                     VisitPlAssignStmt(expr.PlassignStmt, context);
                     break;
+                case Node.NodeOneofCase.IndexStmt:
+                    VisitIndexStmt(expr.IndexStmt, context);
+                    break;
+                case Node.NodeOneofCase.IndexElem:
+                    VisitIndexElem(expr.IndexElem, context);
+                    break;
                 default:
                     break;
             }

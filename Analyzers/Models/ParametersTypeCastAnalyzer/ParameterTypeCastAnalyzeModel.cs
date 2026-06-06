@@ -1,10 +1,11 @@
-﻿using System;
+﻿using PgQuery.AnalyzerLib.GenericWalkers.Models.SemanticAnalyzer.Results;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Analyzers.Models.ParametersTypeCastAnalyzer
+namespace PgQuery.Analyzers.Models.ParametersTypeCastAnalyzer
 {
     public class ParameterTypeCastAnalyzeModel
     {
@@ -13,5 +14,6 @@ namespace Analyzers.Models.ParametersTypeCastAnalyzer
         public string TypeCastName {  get; set; }
         public string TypeCastMod {  get; set; }
         public bool IsArray { get; set; } = false;
+        public ComparableDBColumn ComparableDBColumn { get; set; }
     }
 }

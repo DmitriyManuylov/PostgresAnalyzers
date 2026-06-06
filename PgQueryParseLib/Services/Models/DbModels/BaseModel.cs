@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace PgQueryAnalyzerLib.Services.Models.DbModels
 {
-    public class BaseModel
+    public abstract class BaseModel
     {
+        public BaseModel()
+        {
+
+        }
         public BaseModel(int id, string name)
         {
             Id = id;
