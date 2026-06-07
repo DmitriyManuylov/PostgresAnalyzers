@@ -103,7 +103,7 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
         {
             List<PgGenericNode> list = this.PgGenericNodes.ToList();
 
-            for (int i = list.Count - 1; i >= 0; i--)
+            for (int i = 0; i < list.Count; i++)
             {
                 if (list[i].PgSqlNode?.NodeCase == nodeOneofCase)
                 {
@@ -118,7 +118,7 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
         {
             List<PgGenericNode> list = this.PgGenericNodes.ToList();
 
-            for (int i = list.Count - 1; i >= 0; i--)
+            for (int i = 0; i < list.Count; i++)
             {
                 if (list[i].PLpgSQL_Stmt?.StmtCase == stmtOneofCase)
                 {
@@ -133,7 +133,7 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
         {
             List<PgGenericNode> list = this.PgGenericNodes.ToList();
 
-            for (int i = list.Count - 1; i >= 0; i--)
+            for (int i = 0; i < list.Count; i++)
             {
                 if (nodeOneofCase is not null && list[i].PgSqlNode?.NodeCase != nodeOneofCase)
                 {
@@ -154,7 +154,7 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
         {
             List<PgGenericNode> list = this.PgGenericNodes.ToList();
 
-            for (int i = list.Count - 1; i >= 0; i--)
+            for (int i = 0; i < list.Count; i++)
             {
                 if (stmtOneofCase is not null && list[i].PLpgSQL_Stmt?.StmtCase != stmtOneofCase)
                 {

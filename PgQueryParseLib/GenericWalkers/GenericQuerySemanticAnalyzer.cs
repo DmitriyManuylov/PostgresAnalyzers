@@ -74,7 +74,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
 
         public override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
         {
-            var scope = ScopeStack.Pop();
+            var scope = ScopeStack.Pop() as QueryScope;
 
             base.ProcessSelectStmt_ReverseTraversal(node);
         }
@@ -84,26 +84,51 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
             base.ProcessUpdateStmt_DirectTraversal(node);
 
             var scope = new QueryScope(node);
+
+            ScopeStack.Push(scope);
+
+            var updateStmt = node.PgSqlNode.UpdateStmt;
+
+            ProcessRangeVar(updateStmt.Relation);
         }
 
         public override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
         {
-            var scope = ScopeStack.Pop();
+            var scope = ScopeStack.Pop() as QueryScope;
 
             base.ProcessUpdateStmt_ReverseTraversal(node);
+        }
+
+        public override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
+        {
+            base.ProcessDeleteStmt_DirectTraversal(node);
+
+            var scope = new QueryScope(node);
+            ScopeStack.Push(scope);
+
+            var deleteStmt = node.PgSqlNode.DeleteStmt;
+
+            ProcessRangeVar(deleteStmt.Relation);
+        }
+
+        public override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
+        {
+            var scope = ScopeStack.Pop() as QueryScope;
+
+            base.ProcessDeleteStmt_ReverseTraversal(node);
         }
 
         public override void ProcessFuncCall_DirectTraversal(PgGenericNode node)
         {
             base.ProcessFuncCall_DirectTraversal(node);
 
-            var scope = new QueryScope(node);
-            ScopeStack.Push(scope);
+            //var scope = new QueryScope(node);
+            //ScopeStack.Push(scope);
         }
 
         public override void ProcessFuncCall_ReverseTraversal(PgGenericNode node)
         {
-            var scope = ScopeStack.Pop();
+            //var scope = ScopeStack.Pop();
 
             base.ProcessFuncCall_ReverseTraversal(node);
         }
