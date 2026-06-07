@@ -109,8 +109,13 @@ namespace Analyzers
                         break;
                 }
 
+                if (++depth >= stackList.Count)
+                {
+                    break;
+                }
+
                 currentNode = parentNode;
-                parentNode = stackList[++depth];
+                parentNode = stackList[depth];
 
                 if (columnRefToCompare is null)
                     continue;
@@ -131,6 +136,11 @@ namespace Analyzers
                 }
 
                 break;
+            }
+
+            if (comparableTable is null)
+            {
+                return;
             }
 
             var indices = comparableTable?.Indices.Where(index => index.Columns.Any(col => col.ColumnName == columnRefName));

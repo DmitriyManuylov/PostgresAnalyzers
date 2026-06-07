@@ -131,7 +131,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
 
                 if (string.IsNullOrWhiteSpace(alias))
                 {
-                    result = queryScope.ScopeTablesList.FirstOrDefault(item => item.Alias is null && item.Table.Columns.Any(col => col.ColumnName == columnName)).Table;
+                    result = queryScope.ScopeTablesList.FirstOrDefault(item => item.Table.Columns.Any(col => col.ColumnName == columnName)).Table;
                 }
                 else
                 {
