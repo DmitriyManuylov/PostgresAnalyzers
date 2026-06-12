@@ -1,14 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	 <Version>1.0.0</Version>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Analyzers\PgQuery.Analyzers.csproj" />
-    <ProjectReference Include="..\DMLOpsAnalyzer\PgQuery.DMLOpsAnalyzer.csproj" />
+    <ProjectReference Include="..\PgQuery.AnalyzerLib\PgQuery.AnalyzerLib.csproj" />
   </ItemGroup>
 
 </Project>

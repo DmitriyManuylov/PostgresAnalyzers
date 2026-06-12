@@ -14,20 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="PgQueryAnalyzerLib.dll" />
-  </ItemGroup>
-
-
-  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Npgsql" Version="9.0.4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.10" />
+	<PackageReference Include="PgQuery.Parser" />
   </ItemGroup>
-
-
-  <ItemGroup>
-    <ProjectReference Include="..\PgQueryParser\PgQuery.Parser.csproj" />
-  </ItemGroup>
-
 
 </Project>

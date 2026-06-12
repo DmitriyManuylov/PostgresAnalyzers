@@ -217,7 +217,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
             }
         }
 
-        private void ProcessRangeVar(RangeVar rangeVar) 
+        private void ProcessRangeVar(RangeVar rangeVar)
         {
             var currentScope = this.CurrentScope as QueryScope;
 
