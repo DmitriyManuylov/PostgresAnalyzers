@@ -49,19 +49,19 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
       
-    # Build projects
+    - name: Build projects    
       run: |
-        dotnet build -c Release PgQueryParseLib/PgQuery.AnalyzerLib.csproj
-        dotnet build -c Release DMLOpsAnalyzer/PgQuery.DMLOpsAnalyzer.csproj
-        dotnet build -c Release Analyzers/PgQuery.Analyzers.csproj
-        dotnet build -c Release AnalyzeManager/PgQuery.AnalyzeManagers.csproj
+        dotnet build -c Release PgQuery.AnalyzerLib/PgQuery.AnalyzerLib.csproj
+        dotnet build -c Release PgQuery.DMLOpsAnalyzer/PgQuery.DMLOpsAnalyzer.csproj
+        dotnet build -c Release PgQuery.Analyzers/PgQuery.Analyzers.csproj
+        dotnet build -c Release PgQuery.AnalyzeManagers/PgQuery.AnalyzeManagers.csproj
       
-    # Pack projects
+    - name: Pack projects
       run: |
-        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQueryParseLib/PgQuery.AnalyzerLib.csproj
-        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts DMLOpsAnalyzer/PgQuery.DMLOpsAnalyzer.csproj
-        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts Analyzers/PgQuery.Analyzers.csproj
-        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts AnalyzeManager/PgQuery.AnalyzeManagers.csproj
+        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQuery.AnalyzerLib/PgQuery.AnalyzerLib.csproj
+        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQuery.DMLOpsAnalyzer/PgQuery.DMLOpsAnalyzer.csproj
+        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQuery.Analyzers/PgQuery.Analyzers.csproj
+        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQuery.AnalyzeManagers/PgQuery.AnalyzeManagers.csproj
 
     # Get a short-lived NuGet API key
     - name: NuGet login (OIDC → temp API key)
@@ -73,10 +73,10 @@ jobs:
     # Push to Nuget.org
     - name: NuGet push
       run: |
-        dotnet nuget push "artifacts/PgQuery.AnalyzerLib.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-        dotnet nuget push "artifacts/PgQuery.DMLOpsAnalyzer.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-        dotnet nuget push "artifacts/PgQuery.Analyzers.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
-        dotnet nuget push "artifacts/PgQuery.AnalyzeManagers.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        dotnet nuget push "artifacts/PgQuery.AnalyzerLib.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate --source https://api.nuget.org/v3/index.json
+        dotnet nuget push "artifacts/PgQuery.DMLOpsAnalyzer.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate --source https://api.nuget.org/v3/index.json
+        dotnet nuget push "artifacts/PgQuery.Analyzers.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate --source https://api.nuget.org/v3/index.json
+        dotnet nuget push "artifacts/PgQuery.AnalyzeManagers.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate --source https://api.nuget.org/v3/index.json
       
 
 
