@@ -64,19 +64,19 @@ jobs:
         dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQuery.AnalyzeManagers/PgQuery.AnalyzeManagers.csproj
 
     # Get a short-lived NuGet API key
-    - name: NuGet login (OIDC → temp API key)
-      uses: NuGet/login@v1
-      id: login
-      with:
-        user: ${{ secrets.NUGETORG_USER }}
+    # - name: NuGet login (OIDC → temp API key)
+      # uses: NuGet/login@v1
+      # id: login
+      # with:
+        # user: ${{ secrets.NUGETORG_USER }}
       
     # Push to Nuget.org
     - name: NuGet push
       run: |
-        dotnet nuget push "artifacts/PgQuery.AnalyzerLib.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate --source https://api.nuget.org/v3/index.json
-        dotnet nuget push "artifacts/PgQuery.DMLOpsAnalyzer.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate --source https://api.nuget.org/v3/index.json
-        dotnet nuget push "artifacts/PgQuery.Analyzers.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate --source https://api.nuget.org/v3/index.json
-        dotnet nuget push "artifacts/PgQuery.AnalyzeManagers.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate --source https://api.nuget.org/v3/index.json
+        dotnet nuget push "artifacts/PgQuery.AnalyzerLib.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ secrets.PACKAGESTOKEN }} --skip-duplicate --source https://nuget.pkg.github.com/DmitriyManuylov/index.json
+        dotnet nuget push "artifacts/PgQuery.DMLOpsAnalyzer.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ secrets.PACKAGESTOKEN }} --skip-duplicate --source https://nuget.pkg.github.com/DmitriyManuylov/index.json
+        dotnet nuget push "artifacts/PgQuery.Analyzers.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ secrets.PACKAGESTOKEN }} --skip-duplicate --source https://nuget.pkg.github.com/DmitriyManuylov/index.json
+        dotnet nuget push "artifacts/PgQuery.AnalyzeManagers.${{ steps.get-tag-version.outputs.tag-version }}.nupkg" --api-key ${{ secrets.PACKAGESTOKEN }} --skip-duplicate --source https://nuget.pkg.github.com/DmitriyManuylov/index.json
       
 
 
