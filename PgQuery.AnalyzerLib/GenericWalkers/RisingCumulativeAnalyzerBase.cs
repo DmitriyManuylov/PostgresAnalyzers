@@ -1,4 +1,5 @@
-﻿using PgQueryAnalyzerLib.AnalyzeContext;
+﻿using PgQuery.AnalyzerLib.GenericWalkers.WalkerBase;
+using PgQueryAnalyzerLib.AnalyzeContext;
 using PgQueryAnalyzerLib.GenericWalkers.Models;
 using PgQueryAnalyzerLib.Models;
 using System;
@@ -38,7 +39,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             AnalyzeTree = new AnalyzeTree<TPgAnalyzeNode>();
         }
 
-        public override void ProcessDirectTraversal(PgGenericNode node)
+        protected override void ProcessDirectTraversal(PgGenericNode node)
         {
             var analyzeNode = new AnalyzeTreeNode<TPgAnalyzeNode>()
             {
@@ -58,7 +59,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
             NodesStack.Push(analyzeNode);
         }
 
-        public override void ProcessReverseTraversal(PgGenericNode node)
+        protected override void ProcessReverseTraversal(PgGenericNode node)
         {
             var analyzeNode = NodesStack.Pop();
 

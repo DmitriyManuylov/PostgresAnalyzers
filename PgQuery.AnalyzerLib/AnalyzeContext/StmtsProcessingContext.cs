@@ -1,12 +1,11 @@
 ﻿using DataChangeAnalyzer.Models.DBModels;
 using Google.Protobuf;
 using PgQuery;
+using PgQuery.AnalyzerLib.GenericWalkers.WalkerBase;
 using PgQuery.AnalyzerLib.Services.Models.DbModels.PlainModels;
 using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.Models;
 using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
-using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
-using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using PgQueryParser;
 using System;
 using System.Collections.Generic;
@@ -90,12 +89,12 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
         public void ProcessDirectTraversal(PgGenericNode node)
         {
             PgGenericNodes.Push(node);
-            PgTreeWalker.ProcessDirectTraversal(node);
+            PgTreeWalker.ProcessDirectTraversalInternal(node);
         }
 
         public PgGenericNode ProcessReverseTraversal(PgGenericNode node)
         {
-            PgTreeWalker.ProcessReverseTraversal(node);
+            PgTreeWalker.ProcessReverseTraversalInternal(node);
             return PgGenericNodes.Pop();
         }
 

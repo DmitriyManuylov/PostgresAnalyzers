@@ -32,17 +32,17 @@ namespace Analyzers
         {
         }
 
-        public override void ProcessDirectTraversal(PgGenericNode node)
+        protected override void ProcessDirectTraversal(PgGenericNode node)
         {
 
         }
 
-        public override void ProcessReverseTraversal(PgGenericNode node)
+        protected override void ProcessReverseTraversal(PgGenericNode node)
         {
 
         }
 
-        public override void ProcessParamRef_DirectTraversal(PgGenericNode node)
+        protected override void ProcessParamRef_DirectTraversal(PgGenericNode node)
         {
             base.ProcessParamRef_DirectTraversal(node);
 
@@ -175,11 +175,9 @@ namespace Analyzers
             analyzeModels.Add(parameterTypeCastAnalyzeModel);
         }
 
-        public override void ProcessAExpr_DirectTraversal(PgGenericNode node)
+        protected override void ProcessAExpr_DirectTraversal(PgGenericNode node)
         {
             base.ProcessAExpr_DirectTraversal(node);
-
-
         }
 
         public List<ParameterTypeCastAnalyzeModel> GetResult()

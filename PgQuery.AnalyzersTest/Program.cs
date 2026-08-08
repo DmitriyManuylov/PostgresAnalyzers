@@ -4,8 +4,6 @@ using PgQuery;
 using PgQueryAnalyzerLib;
 using PgQueryAnalyzerLib.AnalyzeContext;
 using PgQueryAnalyzerLib.GenericWalkers;
-using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
-using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using PgQueryParser;
 using System.Runtime.InteropServices;
 using System.Text;

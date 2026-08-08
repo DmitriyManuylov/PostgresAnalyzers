@@ -3,8 +3,6 @@ using PgQueryAnalyzerLib.AnalyzeContext;
 using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.GenericWalkers.Models;
 using PgQueryAnalyzerLib.Models;
-using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
-using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +28,7 @@ namespace DMLOpsAnalyzer.Analyzer
         {
         }
 
-        public override void ProcessReverseTraversal(PgGenericNode node)
+        protected override void ProcessReverseTraversal(PgGenericNode node)
         {
             var analyzeNode = NodesStack.Peek();
             if (analyzeNode.AnalyzeNodeModel.Model is null && analyzeNode.ChildrenAnalyzeNodeModelList.Count <= 0)
@@ -41,7 +39,7 @@ namespace DMLOpsAnalyzer.Analyzer
             base.ProcessReverseTraversal(node);
         }
 
-        public override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessUpdateStmt_DirectTraversal(node);
 
@@ -59,9 +57,11 @@ namespace DMLOpsAnalyzer.Analyzer
                 OpType = SQLDmlType.Update,
                 Fields = updateStmt.TargetList.Select(item => item.ResTarget.Name).ToList(),
             };
+
+
         }
 
-        public override void ProcessInsertStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessInsertStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessInsertStmt_DirectTraversal(node);
 
@@ -81,7 +81,7 @@ namespace DMLOpsAnalyzer.Analyzer
             };
         }
 
-        public override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessDeleteStmt_DirectTraversal(node);
 

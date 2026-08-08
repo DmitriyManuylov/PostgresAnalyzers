@@ -1,7 +1,7 @@
 ﻿using DataChangeAnalyzer.Models.DBModels;
 using PgQuery.AnalyzerLib.GenericWalkers.Models.SemanticAnalyzer;
+using PgQuery.AnalyzerLib.GenericWalkers.WalkerBase;
 using PgQueryAnalyzerLib.AnalyzeContext;
-using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.Models;
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
 
         }
 
-        public override void ProcessSelectStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessSelectStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessSelectStmt_DirectTraversal(node);
 
@@ -72,14 +72,14 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
 
         }
 
-        public override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
         {
             var scope = ScopeStack.Pop() as QueryScope;
 
             base.ProcessSelectStmt_ReverseTraversal(node);
         }
 
-        public override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessUpdateStmt_DirectTraversal(node);
 
@@ -92,14 +92,14 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
             ProcessRangeVar(updateStmt.Relation);
         }
 
-        public override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
         {
             var scope = ScopeStack.Pop() as QueryScope;
 
             base.ProcessUpdateStmt_ReverseTraversal(node);
         }
 
-        public override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessDeleteStmt_DirectTraversal(node);
 
@@ -111,14 +111,14 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
             ProcessRangeVar(deleteStmt.Relation);
         }
 
-        public override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
         {
             var scope = ScopeStack.Pop() as QueryScope;
 
             base.ProcessDeleteStmt_ReverseTraversal(node);
         }
 
-        public override void ProcessFuncCall_DirectTraversal(PgGenericNode node)
+        protected override void ProcessFuncCall_DirectTraversal(PgGenericNode node)
         {
             base.ProcessFuncCall_DirectTraversal(node);
 
@@ -126,14 +126,14 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
             //ScopeStack.Push(scope);
         }
 
-        public override void ProcessFuncCall_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessFuncCall_ReverseTraversal(PgGenericNode node)
         {
             //var scope = ScopeStack.Pop();
 
             base.ProcessFuncCall_ReverseTraversal(node);
         }
 
-        public override void ProcessRangeSubselect_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessRangeSubselect_ReverseTraversal(PgGenericNode node)
         {
             var parentScope = this.ScopeStack.ToList()[this.ScopeStack.Count - 2];
 

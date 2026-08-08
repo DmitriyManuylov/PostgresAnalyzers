@@ -2,6 +2,7 @@
 using DataChangeAnalyzer.Models.DBModels;
 using DMLOpsAnalyzer.Analyzer;
 using PgQuery;
+using PgQuery.AnalyzerLib.GenericWalkers.WalkerBase;
 using PgQuery.AnalyzerLib.Services.Models.DbModels;
 using PgQuery.AnalyzerLib.Services.Models.DbModels.PlainModels;
 using PgQuery.Analyzers.Models.ParametersTypeCastAnalyzer;
@@ -11,8 +12,6 @@ using PgQueryAnalyzerLib.GenericWalkers;
 using PgQueryAnalyzerLib.GenericWalkers.Models;
 using PgQueryAnalyzerLib.Services;
 using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
-using PgQueryAnalyzerLib.StmtsVisit.ExprsVisitors;
-using PgQueryAnalyzerLib.StmtsVisit.StmtsVisitors;
 using PgQueryParser;
 using PgQueryParser.CustomExceptions;
 using System.Configuration;
@@ -211,12 +210,12 @@ namespace AnalyzeManagers
                 {
                     case "pgsql":
                         var expr = parsedPgSqlExprs.Stmts[i].Stmt;
-                        ExprVisitor.VisitExpr(expr, context);
+                        context.PgTreeWalker.VisitExpr(expr, context);
                         break;
 
                     case "plpgsql":
                         var stmt = parsedPlPgSqlStmts[i];
-                        StmtVisitor.VisitStmt(stmt, context);
+                        context.PgTreeWalker.VisitStmt(stmt, context);
                         break;
                 }
             }

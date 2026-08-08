@@ -17,7 +17,7 @@ namespace DDLOpsAnalyzer.Analyzer
 
         }
 
-        public override void ProcessAlterTableStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessAlterTableStmt_DirectTraversal(PgGenericNode node)
         {
             base.ProcessAlterTableStmt_DirectTraversal(node);
 

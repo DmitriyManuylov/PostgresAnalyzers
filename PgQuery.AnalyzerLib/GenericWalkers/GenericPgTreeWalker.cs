@@ -1,4 +1,5 @@
-﻿using PgQueryAnalyzerLib.AnalyzeContext;
+﻿using PgQuery.AnalyzerLib.GenericWalkers.WalkerBase;
+using PgQueryAnalyzerLib.AnalyzeContext;
 using PgQueryAnalyzerLib.Models;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace PgQueryAnalyzerLib.GenericWalkers
 {
-
     public class GenericPgTreeWalker : GenericPgTreeWalkerBase
     {
         public GenericPgTreeWalker()
@@ -23,7 +23,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         }
 
 
-        //public void VisitGenericNode(PgGenericNode node, StmtsProcessingContext context)
+        //protected void VisitGenericNode(PgGenericNode node, StmtsProcessingContext context)
         //{
         //    switch (node.PgNodeDialectType)
         //    {
@@ -39,7 +39,7 @@ namespace PgQueryAnalyzerLib.GenericWalkers
 
         private List<GenericPgTreeWalkerBase> PgTreeWalkerList { get; set; } = new List<GenericPgTreeWalkerBase>();
 
-        //public override TAnalyzeResult GetResult()
+        //protected override TAnalyzeResult GetResult()
         //{
         //    throw new NotImplementedException();
         //}
@@ -51,30 +51,23 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         }
 
         public bool IsWalkerListNotEmpty()
-        
-        
-        
-        
-        
-        
-        
         {
             return PgTreeWalkerList.Any();
         }
 
-        //public override void ProcessDirectTraversal(PgGenericNode node)
+        //protected override void ProcessDirectTraversal(PgGenericNode node)
         //{
         //    foreach (var item in PgTreeWalkerList)
         //    {
-        //        item.ProcessDirectTraversal(node);
+        //        item.ProcessDirectTraversalInternal(node);
         //    }
         //}
 
-        //public override void ProcessReverseTraversal(PgGenericNode node)
+        //protected override void ProcessReverseTraversal(PgGenericNode node)
         //{
         //    foreach (var item in PgTreeWalkerList)
         //    {
-        //        item.ProcessReverseTraversal(node);
+        //        item.ProcessReverseTraversalInternal(node);
         //    }
         //}
 
@@ -99,361 +92,361 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         #region Прямой проход
 
 
-        public override void ProcessSelectStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessSelectStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessSelectStmt_DirectTraversal(node);
+                item.ProcessSelectStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessUpdateStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessUpdateStmt_DirectTraversal(node);
+                item.ProcessUpdateStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessInsertStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessInsertStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessInsertStmt_DirectTraversal(node);
+                item.ProcessInsertStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessDeleteStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessDeleteStmt_DirectTraversal(node);
+                item.ProcessDeleteStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessJoinExpr_DirectTraversal(PgGenericNode node)
+        protected override void ProcessJoinExpr_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessJoinExpr_DirectTraversal(node);
+                item.ProcessJoinExpr_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessResTarget_DirectTraversal(PgGenericNode node)
+        protected override void ProcessResTarget_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessResTarget_DirectTraversal(node);
+                item.ProcessResTarget_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessCommonTableExpr_DirectTraversal(PgGenericNode node)
+        protected override void ProcessCommonTableExpr_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCommonTableExpr_DirectTraversal(node);
+                item.ProcessCommonTableExpr_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessFuncCall_DirectTraversal(PgGenericNode node)
+        protected override void ProcessFuncCall_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessFuncCall_DirectTraversal(node);
+                item.ProcessFuncCall_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessList_DirectTraversal(PgGenericNode node)
+        protected override void ProcessList_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessList_DirectTraversal(node);
+                item.ProcessList_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessColumnRef_DirectTraversal(PgGenericNode node)
+        protected override void ProcessColumnRef_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessColumnRef_DirectTraversal(node);
+                item.ProcessColumnRef_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessAssignStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessAssignStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessAssignStmt_DirectTraversal(node);
+                item.ProcessAssignStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessBlockStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessBlockStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessBlockStmt_DirectTraversal(node);
+                item.ProcessBlockStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessExecSqlStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessExecSqlStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessExecSqlStmt_DirectTraversal(node);
+                item.ProcessExecSqlStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessForiStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessForiStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessForiStmt_DirectTraversal(node);
+                item.ProcessForiStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessForsStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessForsStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessForsStmt_DirectTraversal(node);
+                item.ProcessForsStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessIfStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessIfStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessIfStmt_DirectTraversal(node);
+                item.ProcessIfStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessPerformStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessPerformStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessPerformStmt_DirectTraversal(node);
+                item.ProcessPerformStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessRaiseStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessRaiseStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRaiseStmt_DirectTraversal(node);
+                item.ProcessRaiseStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessReturnNextStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessReturnNextStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessReturnNextStmt_DirectTraversal(node);
+                item.ProcessReturnNextStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessReturnStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessReturnStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessReturnStmt_DirectTraversal(node);
+                item.ProcessReturnStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessWithClause_DirectTraversal(PgGenericNode node)
+        protected override void ProcessWithClause_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessWithClause_DirectTraversal(node);
+                item.ProcessWithClause_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessAExpr_DirectTraversal(PgGenericNode node)
+        protected override void ProcessAExpr_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessAExpr_DirectTraversal(node);
+                item.ProcessAExpr_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessTypeCast_DirectTraversal(PgGenericNode node)
+        protected override void ProcessTypeCast_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessTypeCast_DirectTraversal(node);
+                item.ProcessTypeCast_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessString_DirectTraversal(PgGenericNode node)
+        protected override void ProcessString_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessString_DirectTraversal(node);
+                item.ProcessString_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessBoolExpr_DirectTraversal(PgGenericNode node)
+        protected override void ProcessBoolExpr_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessBoolExpr_DirectTraversal(node);
+                item.ProcessBoolExpr_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessSubLink_DirectTraversal(PgGenericNode node)
+        protected override void ProcessSubLink_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessSubLink_DirectTraversal(node);
+                item.ProcessSubLink_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessCaseExpr_DirectTraversal(PgGenericNode node)
+        protected override void ProcessCaseExpr_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCaseExpr_DirectTraversal(node);
+                item.ProcessCaseExpr_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessCaseWhen_DirectTraversal(PgGenericNode node)
+        protected override void ProcessCaseWhen_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCaseWhen_DirectTraversal(node);
+                item.ProcessCaseWhen_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessRangeVar_DirectTraversal(PgGenericNode node)
+        protected override void ProcessRangeVar_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRangeVar_DirectTraversal(node);
+                item.ProcessRangeVar_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessRangeSubselect_DirectTraversal(PgGenericNode node)
+        protected override void ProcessRangeSubselect_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRangeSubselect_DirectTraversal(node);
+                item.ProcessRangeSubselect_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessRangeFunction_DirectTraversal(PgGenericNode node)
+        protected override void ProcessRangeFunction_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRangeFunction_DirectTraversal(node);
+                item.ProcessRangeFunction_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessCaseStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessCaseStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCaseStmt_DirectTraversal(node);
+                item.ProcessCaseStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessAlterTableStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessAlterTableStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessAlterTableStmt_DirectTraversal(node);
+                item.ProcessAlterTableStmt_DirectTraversalInternal(node);
             }
         }
-        public override void ProcessAlterTableCmd_DirectTraversal(PgGenericNode node)
+        protected override void ProcessAlterTableCmd_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessAlterTableCmd_DirectTraversal(node);
-            }
-        }
-
-        public override void ProcessDropStmt_DirectTraversal(PgGenericNode node)
-        {
-            foreach (var item in PgTreeWalkerList)
-            {
-                item.ProcessDropStmt_DirectTraversal(node);
+                item.ProcessAlterTableCmd_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessRenameStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessDropStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessDropStmt_DirectTraversal(node);
+                item.ProcessDropStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessParamRef_DirectTraversal(PgGenericNode node)
+        protected override void ProcessRenameStmt_DirectTraversal(PgGenericNode node)
+        {
+            foreach (var item in PgTreeWalkerList)
+            {
+                item.ProcessDropStmt_DirectTraversalInternal(node);
+            }
+        }
+
+        protected override void ProcessParamRef_DirectTraversal(PgGenericNode node)
         {
             foreach(var item in PgTreeWalkerList)
             {
-                item.ProcessParamRef_DirectTraversal(node);
+                item.ProcessParamRef_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessCoalesceExpr_DirectTraversal(PgGenericNode node)
+        protected override void ProcessCoalesceExpr_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCoalesceExpr_DirectTraversal(node);
+                item.ProcessCoalesceExpr_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessNullTest_DirectTraversal(PgGenericNode node)
+        protected override void ProcessNullTest_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessNullTest_DirectTraversal(node);
+                item.ProcessNullTest_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessNullIfExpr_DirectTraversal(PgGenericNode node)
+        protected override void ProcessNullIfExpr_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessNullIfExpr_DirectTraversal(node);
+                item.ProcessNullIfExpr_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessDirectTraversal(PgGenericNode node)
+        protected override void ProcessDirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessDirectTraversal(node);
+                item.ProcessDirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessRowExpr_DirectTraversal(PgGenericNode node)
+        protected override void ProcessRowExpr_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRowExpr_DirectTraversal(node);
+                item.ProcessRowExpr_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessMultiAssignRef_DirectTraversal(PgGenericNode node)
+        protected override void ProcessMultiAssignRef_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessMultiAssignRef_DirectTraversal(node);
+                item.ProcessMultiAssignRef_DirectTraversalInternal(node);
             }
         }
-        public override void ProcessIndexStmt_DirectTraversal(PgGenericNode node)
+        protected override void ProcessIndexStmt_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessIndexStmt_DirectTraversal(node);
+                item.ProcessIndexStmt_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessIndexElem_DirectTraversal(PgGenericNode node)
+        protected override void ProcessIndexElem_DirectTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessIndexElem_DirectTraversal(node);
+                item.ProcessIndexElem_DirectTraversalInternal(node);
             }
         }
 
@@ -461,363 +454,368 @@ namespace PgQueryAnalyzerLib.GenericWalkers
 
         #region Обратный проход
 
-        public override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessSelectStmt_ReverseTraversal(node);
+                item.ProcessSelectStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
+        internal void fed()
+        {
+
+        }
+
+        protected override void ProcessUpdateStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessUpdateStmt_ReverseTraversal(node);
+                item.ProcessUpdateStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessInsertStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessInsertStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessInsertStmt_ReverseTraversal(node);
+                item.ProcessInsertStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessDeleteStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessDeleteStmt_ReverseTraversal(node);
+                item.ProcessDeleteStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessJoinExpr_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessJoinExpr_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessJoinExpr_ReverseTraversal(node);
+                item.ProcessJoinExpr_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessResTarget_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessResTarget_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessResTarget_ReverseTraversal(node);
+                item.ProcessResTarget_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessCommonTableExpr_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessCommonTableExpr_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCommonTableExpr_ReverseTraversal(node);
+                item.ProcessCommonTableExpr_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessFuncCall_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessFuncCall_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessFuncCall_ReverseTraversal(node);
+                item.ProcessFuncCall_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessColumnRef_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessColumnRef_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessColumnRef_ReverseTraversal(node);
+                item.ProcessColumnRef_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessAssignStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessAssignStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessAssignStmt_ReverseTraversal(node);
+                item.ProcessAssignStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessBlockStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessBlockStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessBlockStmt_ReverseTraversal(node);
+                item.ProcessBlockStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessExecSqlStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessExecSqlStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessExecSqlStmt_ReverseTraversal(node);
+                item.ProcessExecSqlStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessForiStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessForiStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessForiStmt_ReverseTraversal(node);
+                item.ProcessForiStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessForsStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessForsStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessForsStmt_ReverseTraversal(node);
+                item.ProcessForsStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessIfStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessIfStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessIfStmt_ReverseTraversal(node);
+                item.ProcessIfStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessPerformStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessPerformStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessPerformStmt_ReverseTraversal(node);
+                item.ProcessPerformStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessRaiseStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessRaiseStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRaiseStmt_ReverseTraversal(node);
+                item.ProcessRaiseStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessReturnNextStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessReturnNextStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessReturnNextStmt_ReverseTraversal(node);
+                item.ProcessReturnNextStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessReturnStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessReturnStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessReturnStmt_ReverseTraversal(node);
+                item.ProcessReturnStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessWithClause_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessWithClause_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessWithClause_ReverseTraversal(node);
+                item.ProcessWithClause_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessAExpr_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessAExpr_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessAExpr_ReverseTraversal(node);
+                item.ProcessAExpr_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessTypeCast_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessTypeCast_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessTypeCast_DirectTraversal(node);
+                item.ProcessTypeCast_DirectTraversalInternal(node);
             }
         }
 
-        public override void ProcessString_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessString_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessString_ReverseTraversal(node);
+                item.ProcessString_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessBoolExpr_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessBoolExpr_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessBoolExpr_ReverseTraversal(node);
+                item.ProcessBoolExpr_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessSubLink_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessSubLink_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessSubLink_ReverseTraversal(node);
+                item.ProcessSubLink_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessCaseExpr_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessCaseExpr_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCaseExpr_ReverseTraversal(node);
+                item.ProcessCaseExpr_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessCaseWhen_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessCaseWhen_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCaseWhen_ReverseTraversal(node);
+                item.ProcessCaseWhen_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessRangeVar_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessRangeVar_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRangeVar_ReverseTraversal(node);
+                item.ProcessRangeVar_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessRangeSubselect_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessRangeSubselect_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRangeSubselect_ReverseTraversal(node);
+                item.ProcessRangeSubselect_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessRangeFunction_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessRangeFunction_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRangeFunction_ReverseTraversal(node);
+                item.ProcessRangeFunction_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessCaseStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessCaseStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCaseStmt_ReverseTraversal(node);
+                item.ProcessCaseStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessAlterTableStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessAlterTableStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessAlterTableStmt_ReverseTraversal(node);
+                item.ProcessAlterTableStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessAlterTableCmd_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessAlterTableCmd_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessAlterTableCmd_ReverseTraversal(node);
+                item.ProcessAlterTableCmd_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessDropStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessDropStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessDropStmt_ReverseTraversal(node);
+                item.ProcessDropStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessRenameStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessRenameStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessDropStmt_ReverseTraversal(node);
+                item.ProcessDropStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessMultiAssignRef_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessMultiAssignRef_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessMultiAssignRef_ReverseTraversal(node);
+                item.ProcessMultiAssignRef_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessReverseTraversal(PgGenericNode node)
+        protected override void ProcessReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessReverseTraversal(node);
+                item.ProcessReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessRowExpr_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessRowExpr_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessRowExpr_ReverseTraversal(node);
+                item.ProcessRowExpr_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessList_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessList_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessList_ReverseTraversal(node);
+                item.ProcessList_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessParamRef_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessParamRef_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessParamRef_ReverseTraversal(node);
+                item.ProcessParamRef_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessCoalesceExpr_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessCoalesceExpr_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessCoalesceExpr_ReverseTraversal(node);
+                item.ProcessCoalesceExpr_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessNullTest_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessNullTest_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessNullTest_ReverseTraversal(node);
+                item.ProcessNullTest_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessNullIfExpr_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessNullIfExpr_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessNullIfExpr_ReverseTraversal(node);
+                item.ProcessNullIfExpr_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessIndexStmt_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessIndexStmt_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessIndexStmt_ReverseTraversal(node);
+                item.ProcessIndexStmt_ReverseTraversalInternal(node);
             }
         }
 
-        public override void ProcessIndexElem_ReverseTraversal(PgGenericNode node)
+        protected override void ProcessIndexElem_ReverseTraversal(PgGenericNode node)
         {
             foreach (var item in PgTreeWalkerList)
             {
-                item.ProcessIndexElem_ReverseTraversal(node);
+                item.ProcessIndexElem_ReverseTraversalInternal(node);
             }
         }
         #endregion
