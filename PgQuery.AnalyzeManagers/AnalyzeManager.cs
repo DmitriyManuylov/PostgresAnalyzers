@@ -15,6 +15,7 @@ using PgQueryAnalyzerLib.Services.Models.DbModels.PlainModels;
 using PgQueryParser;
 using PgQueryParser.CustomExceptions;
 using System.Configuration;
+using System.Net.NetworkInformation;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -22,6 +23,7 @@ namespace AnalyzeManagers
 {
     public class AnalyzeManager
     {
+        private static string ConnectionString = ConfigurationManager.ConnectionStrings["PostgresDB"]?.ConnectionString;
         private static List<DBFunctionPlainModel> Functions;
         private static Dictionary<string, DBFunctionPlainModel> FunctionsDictionary;
         private static HashSet<TableModel> Tables;
@@ -43,6 +45,9 @@ namespace AnalyzeManagers
 
         static AnalyzeManager()
         {
+            var hostRegex = new Regex(@"Host=(?<host>(?:\w+\.){2,}\w+);\s*Port");
+            string host = string.IsNullOrWhiteSpace(ConnectionString) ? null :hostRegex.Match(ConnectionString)?.Groups["host"]?.Value ?? null;
+
             string functionsDefFile = ConfigurationManager.AppSettings.Get("FunctionsDefinitions");
             string columnsDefFile = ConfigurationManager.AppSettings.Get("Columns");
             string indicesDefFile = ConfigurationManager.AppSettings.Get("Indices");
@@ -55,14 +60,14 @@ namespace AnalyzeManagers
             List<ColumnPlainModel> columns = default;
             List<IndexPlainModel> indices = default;
 
-            DbEntitiesService dbEntitiesService = new DbEntitiesService();
+            DbEntitiesService dbEntitiesService = default;
 
             if (functionsDefFile is not null && File.Exists(functionsDefFile))
             {
                 string fileText = File.ReadAllText(functionsDefFile);
                 functions = JsonSerializer.Deserialize<List<DBFunctionPlainModel>>(fileText);
             }
-            
+
             if (columnsDefFile is not null && File.Exists(columnsDefFile))
             {
                 string fileText = File.ReadAllText(columnsDefFile);
@@ -77,7 +82,16 @@ namespace AnalyzeManagers
                 indices = JsonSerializer.Deserialize<List<IndexPlainModel>>(fileText);
             }
 
-            if (columns is null)
+            Ping ping = new Ping();
+
+            bool isDbHostAvailable = string.IsNullOrWhiteSpace(host) ? false : ping.Send(host, 1000).Status == IPStatus.Success;
+
+            if (isDbHostAvailable)
+            {
+                dbEntitiesService = new DbEntitiesService();
+            }
+
+            if ((columns is null || !columns.Any()) && isDbHostAvailable)
             {
                 try
                 {
@@ -93,7 +107,7 @@ namespace AnalyzeManagers
                 }
             }
 
-            if (indices is null)
+            if ((indices is null || !indices.Any()) && isDbHostAvailable)
             {
                 try
                 {
@@ -114,7 +128,7 @@ namespace AnalyzeManagers
                 SetTables(columns, indices);
             }
 
-            if (functions is null)
+            if ((functions is null || !functions.Any()) && isDbHostAvailable)
             {
                 try
                 {
@@ -132,10 +146,10 @@ namespace AnalyzeManagers
 
             Dictionary<string, DBFunctionPlainModel> functionsDictionary = new Dictionary<string, DBFunctionPlainModel>();
 
-            functions.ForEach(f => functionsDictionary.TryAdd($"{f.NspName}.{f.FuncName}", f));
+            functions?.ForEach(f => functionsDictionary.TryAdd($"{f.NspName}.{f.FuncName}", f));
 
-            Functions = functions;
-            FunctionsDictionary = functionsDictionary;
+            Functions = functions ?? [];
+            FunctionsDictionary = functionsDictionary ?? [];
         }
 
         public AnalyzeManager(string queryText)
