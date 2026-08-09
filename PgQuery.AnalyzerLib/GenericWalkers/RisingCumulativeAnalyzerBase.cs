@@ -29,7 +29,8 @@ namespace PgQueryAnalyzerLib.GenericWalkers
         //}
         public RisingCumulativeAnalyzerBase()
         {
-
+            NodesStack = new Stack<AnalyzeTreeNode<TPgAnalyzeNode>>();
+            AnalyzeTree = new AnalyzeTree<TPgAnalyzeNode>();
         }
 
         protected AnalyzeTree<TPgAnalyzeNode> AnalyzeTree { get; private set; }
