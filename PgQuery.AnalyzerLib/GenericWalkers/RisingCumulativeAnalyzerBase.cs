@@ -69,17 +69,12 @@ namespace PgQueryAnalyzerLib.GenericWalkers
                 return;
             }
 
-            if (!analyzeNode.AnalyzeNodeModel.IsNeedToPropogate)
-            {
-                return;
-            }
-
-            if (analyzeNode.AnalyzeNodeModel is not null)
+            if (analyzeNode.AnalyzeNodeModel is not null && analyzeNode.AnalyzeNodeModel.IsNeedToPropogate)
             {
                 CurrentNode.ChildrenAnalyzeNodeModelList.Add(analyzeNode.AnalyzeNodeModel);
             }
 
-            if (analyzeNode.ChildrenAnalyzeNodeModelList.Count > 0)
+            if (analyzeNode.ChildrenAnalyzeNodeModelList.Any())
             {
                 CurrentNode.ChildrenAnalyzeNodeModelList.AddRange(analyzeNode.ChildrenAnalyzeNodeModelList);
             }

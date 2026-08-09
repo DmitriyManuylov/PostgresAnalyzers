@@ -31,7 +31,15 @@ namespace DMLOpsAnalyzer.Analyzer
         protected override void ProcessReverseTraversal(PgGenericNode node)
         {
             var analyzeNode = NodesStack.Peek();
-            if (analyzeNode.AnalyzeNodeModel.Model is null && analyzeNode.ChildrenAnalyzeNodeModelList.Count <= 0)
+
+            if (CheckNeedPropogate(node))
+            {
+                if (analyzeNode.AnalyzeNodeModel.Model is null)
+                {
+                    analyzeNode.AnalyzeNodeModel.IsNeedToPropogate = false;
+                }
+            }
+            else
             {
                 analyzeNode.AnalyzeNodeModel.IsNeedToPropogate = false;
             }
@@ -103,6 +111,18 @@ namespace DMLOpsAnalyzer.Analyzer
         public AnalyzeTree<DMLAnalyzeNode> GetResult()
         {
             return AnalyzeTree;
+        }
+
+        private bool CheckNeedPropogate(PgGenericNode node)
+        {
+            if (node.PgSqlNode?.InsertStmt is not null)
+                return true;
+            if (node.PgSqlNode?.UpdateStmt is not null)
+                return true;
+            if (node.PgSqlNode?.DeleteStmt is not null)
+                return true;
+
+            return false;
         }
 
         //protected override void GeneralPreprocessExpr(PgGenericNode node)

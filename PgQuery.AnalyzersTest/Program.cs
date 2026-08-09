@@ -1,4 +1,5 @@
 ﻿using AnalyzeManagers;
+using DMLOpsAnalyzer.Analyzer;
 using Google.Protobuf;
 using PgQuery;
 using PgQueryAnalyzerLib;
@@ -433,6 +434,7 @@ returning number";
 
         static void Main(string[] args)
         {
+            TestDMLAnalyzer();
             AnalyzeParametersCast(upd2);
             //ParseQueries();
             //AnalyzeDMLOperations(dfs);
@@ -457,6 +459,23 @@ returning number";
             manager.Analyze();
 
             var analyzeRes = manager.GetParameterTypeCastAnalyzeResult();
+        }
+
+        private static void TestDMLAnalyzer()
+        {
+            string sql = @"
+
+with del as 
+    (delete from mir.insurance_service_place isp where isp.insurance = cast(@Insurance as char(36)) returning oid)
+    insert into mir.insurance_service_place(oid,service_place_insurance,insurance)
+    select public.generate_uuid_v4(),q.oid, @Insurance from (select unnest(cast(@ServPlaces as char(36)[])) as oid) q 
+";
+
+            AnalyzeManager manager = new AnalyzeManager(sql);
+            manager.AddAnalyzer<DMLAnalyzer>();
+
+            manager.Analyze();
+            var result = manager.GetDMLOperationsResult();
         }
 
         private static void ParseQueries()
