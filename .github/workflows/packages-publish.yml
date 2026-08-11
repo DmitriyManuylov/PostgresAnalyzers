@@ -58,10 +58,10 @@ jobs:
       
     - name: Pack projects
       run: |
-        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQuery.AnalyzerLib/PgQuery.AnalyzerLib.csproj
-        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQuery.DMLOpsAnalyzer/PgQuery.DMLOpsAnalyzer.csproj
-        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQuery.Analyzers/PgQuery.Analyzers.csproj
-        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -o artifacts PgQuery.AnalyzeManagers/PgQuery.AnalyzeManagers.csproj
+        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o artifacts PgQuery.AnalyzerLib/PgQuery.AnalyzerLib.csproj
+        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o artifacts PgQuery.DMLOpsAnalyzer/PgQuery.DMLOpsAnalyzer.csproj
+        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o artifacts PgQuery.Analyzers/PgQuery.Analyzers.csproj
+        dotnet pack -c Release --version ${{ steps.get-tag-version.outputs.tag-version }} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o artifacts PgQuery.AnalyzeManagers/PgQuery.AnalyzeManagers.csproj
 
     # Get a short-lived NuGet API key
     # - name: NuGet login (OIDC → temp API key)
