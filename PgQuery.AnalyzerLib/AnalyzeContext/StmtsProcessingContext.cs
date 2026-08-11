@@ -175,14 +175,18 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
         /// </summary>
         /// <param name="nspName">Пространство имен функции.</param>
         /// <param name="funcName">Название функции.</param>
+        /// <param name="node">Текущий узел дерева</param>
         /// <returns></returns>
-        public bool CheckExistsFuncCallCycle(string nspName, string funcName)
+        public bool CheckExistsFuncCallCycle(string nspName, string funcName, PgGenericNode node)
         {
             List<PgGenericNode> list = this.PgGenericNodes
                 .Where(item =>
                     item.PgSqlNode?.NodeCase == Node.NodeOneofCase.FuncCall
                         &&
-                    item.PgSqlNode.FuncCall.Funcname.Count == 2).ToList();
+                    item.PgSqlNode.FuncCall.Funcname.Count == 2
+                        &&
+                    item != node
+                    ).ToList();
 
             var names = list.Select(item => new
             {

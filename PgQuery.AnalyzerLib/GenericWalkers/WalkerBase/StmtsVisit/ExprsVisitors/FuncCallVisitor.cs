@@ -36,7 +36,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers.WalkerBase
             {
                 PLpgSQL_stmt funcDef = default;
 
-                bool isExistsFuncCallCycle = funcCall.Funcname.Count == 2 ? context.CheckExistsFuncCallCycle(nspName, funcName) : false;
+                bool isExistsFuncCallCycle = funcCall.Funcname.Count == 2 ? context.CheckExistsFuncCallCycle(nspName, funcName, node) : false;
 
                 if (funcCall.Funcname.Count == 2 && !isExistsFuncCallCycle && funcCall.Funcname[0].String.Sval != "pg_catalog")
                 {

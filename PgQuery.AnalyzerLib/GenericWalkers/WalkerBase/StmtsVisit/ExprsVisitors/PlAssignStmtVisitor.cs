@@ -17,7 +17,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers.WalkerBase
 
             var node = context.PgGenericNodes.Peek();
 
-            context.PgTreeWalker.ProcessDeleteStmt_DirectTraversal(node);
+            context.PgTreeWalker.ProcessAssignStmt_DirectTraversal(node);
 
             if (plAssignStmt.Val is not null)
             {
@@ -29,7 +29,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers.WalkerBase
                 VisitExpr(selectStmt, context);
             }
 
-            context.PgTreeWalker.ProcessDeleteStmt_ReverseTraversal(node);
+            context.PgTreeWalker.ProcessAssignStmt_ReverseTraversal(node);
         }
     }
 }
