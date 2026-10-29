@@ -11,6 +11,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers.Models.SemanticAnalyzer
     {
         public string Alias { get; set; }
         public Node SubqueryNode { get; set; }
+        public Node ParentNode { get; set; }
         public TableModel Table { get; set; }
     }
 }

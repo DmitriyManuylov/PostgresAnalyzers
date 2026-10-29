@@ -136,6 +136,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
             {
                 Alias = null,
                 SubqueryNode = node.PgSqlNode,
+                ParentNode = node.Parent.PgSqlNode,
                 Table = table,
             });
 
@@ -243,7 +244,7 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
 
             try
             {
-                SubqueryModel subqueryModel = currentScope.SubqueryTables.FirstOrDefault(item => item.SubqueryNode == currentNode.PgSqlNode);
+                SubqueryModel subqueryModel = currentScope.SubqueryTables.FirstOrDefault(item => item.ParentNode.CommonTableExpr == cte);
                 subqueryModel.Table.Name = cte.Ctename;
             }
             catch
@@ -316,13 +317,15 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
         {
             var currentScope = this.CurrentScope as QueryScope;
 
-            var currentNode = this.Context.PgGenericNodes.Peek();
-
             try
             {
-                SubqueryModel subqueryModel = currentScope.SubqueryTables.FirstOrDefault(item => item.SubqueryNode == currentNode.PgSqlNode);
+                SubqueryModel subqueryModel = currentScope.SubqueryTables.FirstOrDefault(item => item.ParentNode.RangeSubselect == rangeSubselect);
 
-                currentScope.ScopeTablesList.Add((rangeSubselect.Alias?.Aliasname, subqueryModel.Table));
+                subqueryModel.Table.Name = rangeSubselect?.Alias?.Aliasname;
+
+                var item = (rangeSubselect.Alias?.Aliasname, subqueryModel.Table);
+
+                currentScope.ScopeTablesList.Add(item);
             }
             catch
             {

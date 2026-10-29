@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IndexUsingAnalyzer.Analyzer
+namespace PgQuery.IndexUsingAnalyzer.Analyzer
 {
     public class IndexUsingAnalyzer : RisingCumulativeAnalyzerBase<IndexUsingAnalyzeNode>
     {
@@ -92,11 +92,11 @@ namespace IndexUsingAnalyzer.Analyzer
                 var leftCol = stmt.Larg.RangeVar;
                 var rightCol = stmt.Rarg.RangeVar;
 
+                var leftTable = Context.GetDBTableModel(leftCol.Schemaname, leftCol.Relname)
+                    ?? throw new Exception($"Модель таблицы {leftCol.Schemaname}.{leftCol.Relname} не найдена");
 
-
-                var leftTable = Context.GetDBTableModel(leftCol.Schemaname, leftCol.Relname);
-
-                var rightTable = Context.GetDBTableModel(rightCol.Schemaname, rightCol.Relname);
+                var rightTable = Context.GetDBTableModel(rightCol.Schemaname, rightCol.Relname)
+                    ?? throw new Exception($"Модель таблицы {rightCol.Schemaname}.{rightCol.Relname} не найдена");
 
                 ProcessJoinQuals(stmt.Quals);
                 // var lexpr = stmt.Quals.

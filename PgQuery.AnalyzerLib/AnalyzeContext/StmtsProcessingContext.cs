@@ -47,7 +47,7 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
                 return tableModel;
             }
 
-            throw new Exception($"Модель таблицы {nspName}.{tableName} не найдена");
+            return null;
         }
 
         public DBFunctionPlainModel GetDBFunctionPlainModel(string nspName, string funcName)
@@ -88,6 +88,7 @@ namespace PgQueryAnalyzerLib.AnalyzeContext
 
         public void ProcessDirectTraversal(PgGenericNode node)
         {
+            node.Parent = PgGenericNodes.TryPeek(out var result) ? result : null;
             PgGenericNodes.Push(node);
             PgTreeWalker.ProcessDirectTraversalInternal(node);
         }
