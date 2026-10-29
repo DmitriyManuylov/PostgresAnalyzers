@@ -426,6 +426,33 @@ SELECT diag_presc_model.*
                           AND diag = @diag
                           AND case when not cast(@newmkb10 as varchar) is null then model_mkb10_ch.mkb10 = @newmkb10 else 1=1 end";
 
+        const string complexQuery = @"
+with pp as (
+select
+    p.id,
+    p.presctype_id,
+    pt.name as name,
+    (select id from mir.mdoc where id = 'qqq') as mdoc_id,
+    mir.zgetpersonfio(mdoc.people_id) as fio,
+    p.*,
+    pt.*,
+    cast (1 as varchar) as constValue,
+    r.q,
+    *
+from mir.presc p
+left join mir.my_func(p.id) as r on true
+inner join (
+    select
+        pt.oid,
+        pt.name
+    from mir.presctype pt
+    where
+        pt.oid = p.presctype_id) pt on true)
+select
+    *
+from pp
+";
+
         const string upd2 = @"
 update mir.card_shelving
       set number = :number
@@ -464,11 +491,7 @@ returning number";
         private static void TestDMLAnalyzer()
         {
             string sql = @"
-
-with del as 
-    (delete from mir.insurance_service_place isp where isp.insurance = cast(@Insurance as char(36)) returning oid)
-    insert into mir.insurance_service_place(oid,service_place_insurance,insurance)
-    select public.generate_uuid_v4(),q.oid, @Insurance from (select unnest(cast(@ServPlaces as char(36)[])) as oid) q 
+select test.test()
 ";
 
             AnalyzeManager manager = new AnalyzeManager(sql);
@@ -482,6 +505,9 @@ with del as
         {
             
             var parser = new PostgreSqlQueryParser();
+
+            var compl = parser.GetQueryParseTree(complexQuery);
+
             var insJson = parser.GetQueryParseTree(insert_stmt);
             var insJson2 = parser.GetQueryParseTree(insert_stmt2);
             var insJson3 = parser.GetQueryParseTree(insertStmt3);

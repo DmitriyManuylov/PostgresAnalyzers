@@ -1,4 +1,5 @@
-﻿using DataChangeAnalyzer.Models.DBModels;
+﻿using Dapper;
+using DataChangeAnalyzer.Models.DBModels;
 using PgQuery.AnalyzerLib.GenericWalkers.Models.SemanticAnalyzer;
 using PgQuery.AnalyzerLib.GenericWalkers.WalkerBase;
 using PgQueryAnalyzerLib.AnalyzeContext;
@@ -23,6 +24,8 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
             }
         }
 
+        private TableModel LastSubqueryTable { get; set; }
+
         public GenericQuerySemanticAnalyzer() : base() 
         {
             
@@ -35,10 +38,17 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
 
         protected override void ProcessSelectStmt_DirectTraversal(PgGenericNode node)
         {
-            base.ProcessSelectStmt_DirectTraversal(node);
-
             var scope = new QueryScope(node);
+
             ScopeStack.Push(scope);
+
+            base.ProcessSelectStmt_DirectTraversal(node);
+        }
+
+        protected override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
+        {
+            var scope = ScopeStack.Pop() as QueryScope;
+            var parentScope = ScopeStack.Peek() as QueryScope;
 
             var selectStmt = node.PgSqlNode.SelectStmt;
 
@@ -67,14 +77,67 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
                             continue;
                     }
                 }
-
             }
 
-        }
+            var table = new TableModel
+            {
+                Columns = new List<Services.Models.DbModels.ColumnModel>()
+            };
 
-        protected override void ProcessSelectStmt_ReverseTraversal(PgGenericNode node)
-        {
-            var scope = ScopeStack.Pop() as QueryScope;
+            var colrefs = selectStmt
+                .TargetList
+                .Where(item => item.ResTarget?.Val?.ColumnRef is not null);
+                
+            var resTargets = colrefs;
+
+            foreach (var resTarget in selectStmt.TargetList.Select(item => item.ResTarget))
+            {
+                switch (resTarget.Val.NodeCase)
+                {
+                    case Node.NodeOneofCase.ColumnRef:
+                        var colref = resTarget.Val.ColumnRef;
+
+                        var firstSegment = colref.Fields.First();
+                        if (firstSegment.NodeCase == Node.NodeOneofCase.AStar)
+                        {
+                            table.Columns.AddRange(scope.ScopeTablesList.SelectMany(tb => tb.Table.Columns));
+
+                            continue;
+                        }
+
+                        string tableName = colref.Fields.First().String.Sval;
+
+                        switch (colref.Fields[1].NodeCase)
+                        {
+                            case Node.NodeOneofCase.AStar:
+                                table.Columns.AddRange(scope.ScopeTablesList.FirstOrDefault(tb => (tb.Alias ?? tb.Table.Name) == tableName).Table.Columns);
+                                break;
+
+                            case Node.NodeOneofCase.String:
+                                table.Columns.Add(new Services.Models.DbModels.ColumnModel()
+                                {
+                                    ColumnName = resTarget.Name ?? colref.Fields[1].String.Sval
+                                });
+                                break;
+                        }
+                        break;
+
+                    default:
+                        table.Columns.Add(new Services.Models.DbModels.ColumnModel
+                        {
+                            ColumnName = resTarget.Name,
+                        });
+
+                        break;
+                }
+            }
+
+            parentScope?.SubqueryTables.Add(new SubqueryModel
+            {
+                Alias = null,
+                SubqueryNode = node.PgSqlNode,
+                Table = table,
+            });
 
             base.ProcessSelectStmt_ReverseTraversal(node);
         }
@@ -176,7 +239,17 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
         {
             var currentScope = this.CurrentScope as QueryScope;
 
+            var currentNode = this.Context.PgGenericNodes.Peek();
 
+            try
+            {
+                SubqueryModel subqueryModel = currentScope.SubqueryTables.FirstOrDefault(item => item.SubqueryNode == currentNode.PgSqlNode);
+                subqueryModel.Table.Name = cte.Ctename;
+            }
+            catch
+            {
+
+            }
         }
 
         private void ProcessJoinExpr(JoinExpr joinExpr)
@@ -227,6 +300,8 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
             {
                 tableModel = Context.GetDBTableModel(rangeVar.Schemaname, rangeVar.Relname);
 
+                tableModel ??= currentScope.SubqueryTables.FirstOrDefault(item => item.Table.Name == rangeVar.Relname)?.Table;
+
                 var item = (rangeVar.Alias?.Aliasname, tableModel);
 
                 currentScope.ScopeTablesList.Add(item);
@@ -235,8 +310,6 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
             {
 
             }
-
-            
         }
 
         private void ProcessRangeSubselect(RangeSubselect rangeSubselect)
@@ -247,13 +320,9 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
 
             try
             {
-                SubqueryModel subqueryModel = new SubqueryModel
-                {
-                    Alias = rangeSubselect.Alias.Aliasname,
-                    SubqueryNode = currentNode.PgSqlNode
-                };
+                SubqueryModel subqueryModel = currentScope.SubqueryTables.FirstOrDefault(item => item.SubqueryNode == currentNode.PgSqlNode);
 
-                currentScope.SubqueryTables.Add(subqueryModel);
+                currentScope.ScopeTablesList.Add((rangeSubselect.Alias?.Aliasname, subqueryModel.Table));
             }
             catch
             {
@@ -271,7 +340,26 @@ namespace PgQuery.AnalyzerLib.GenericWalkers
 
             try
             {
-                var item = (rangeFunction.Alias.Aliasname, null as TableModel);
+                var funcCall = rangeFunction.Functions
+                .FirstOrDefault()?.List.Items.FirstOrDefault()?.FuncCall;
+
+                var funcNameList = funcCall.Funcname;
+
+                string funcNsp = null;
+                string funcName = null;
+
+                switch (funcNameList.Count)
+                {
+                    case 1:
+                        funcName = funcNameList.First().String.Sval;
+                        break;
+                    case 2:
+                        funcNsp = funcNameList.First().String.Sval;
+                        funcName = funcNameList.Last().String.Sval;
+                        break;
+                }
+
+                var function = Context.DBFunctionList.FirstOrDefault(item => item.NspName == funcNsp && item.FuncName == funcName);
 
                 SubqueryModel subqueryModel = new SubqueryModel
                 {
